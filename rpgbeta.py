@@ -94,7 +94,7 @@ while True:
                 gold=file.read()
                 gold=int(gold[4:])
                 file.close()
-                if gold>=item['body'][6:]:
+                if gold>=int(item['body'][6:]):
                     file=open('gld/'+str(item['user_id'])+'.txt', 'w')
                     file.write('gld='+str(gold+int((item['body'][6:])*(win/100))))
                     file.close()
@@ -104,7 +104,7 @@ while True:
                 gold=file.read()
                 gold=int(gold[4:])
                 file.close()
-                if gold>=item['body'][6:]:
+                if gold>=int(item['body'][6:]):
                     file=open('gld/'+str(item['user_id'])+'.txt', 'w')
                     file.write('gld='+str(gold-int(item['body'][6:])))
                     file.close()
