@@ -21,20 +21,29 @@ while True:
             file=open('gld/'+str(item['user_id'])+'.txt', 'w')
             file.write('gld=0')
             file.close()
+            file=open('cd/'+str(item['user_id'])+'.txt', 'w')
+            file.write(str(time.time()))
+            file.close()
             
         else:
-            exp=file.read()
-            if exp:
+            timing=open('cd/'+str(item['user_id'])+'.txt', 'r')
+            times=timing.read()
+            if time.time()-float(times)>=5:
+                exp=file.read()
                 expN=float(exp[4:])+1
                 if (math.log(expN/5+1, 2)%1==0):
-                    write_msg(u'Грац, @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+u'), с '+str(int(math.log(expN/5+1, 2)))+u' лвлом!\n+'+str(5**int(math.log(expN/5+1, 2))+100)+'gold')
+                    write_msg(u'Грац, @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+u'), с '+str(int(math.log(expN/5+1, 2)))+u' лвлом!\n+'+str(3**int(math.log(expN/5+1, 2))+100)+' gold')
                     gold=open('gld/'+str(item['user_id'])+'.txt', 'r')
-                    current=int(gold.read()[4:])+5**int(math.log(expN/5+1, 2))+100
+                    current=int(gold.read()[4:])+3**int(math.log(expN/5+1, 2))+100
                     gold.close()
                     gold=open('gld/'+str(item['user_id'])+'.txt', 'w')
                     gold.write('gld='+str(current))
-            file=open('rpg/'+str(item['user_id'])+'.txt', 'w')
-            file.write('exp='+str(expN))
+                file=open('rpg/'+str(item['user_id'])+'.txt', 'w')
+                file.write('exp='+str(expN))
+                file.close()
+            timing.close()
+            file=open('cd/'+str(item['user_id'])+'.txt', 'w')
+            file.write(str(time.time()))
             file.close()
         if item['body']=='/profile':
             file=open('rpg/'+str(item['user_id'])+'.txt', 'r')
@@ -42,5 +51,38 @@ while True:
             exp=float(exp[4:])
             file.close()
             file=open('gld/'+str(item['user_id'])+'.txt', 'r')
-            gold=file.read()[4:]
-            write_msg(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u')\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+'\nexp:'+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+'\nGOLD: '+gold)
+            gold=file.read()
+            file.close()
+            write_msg(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u')\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+'\nexp: '+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+'\nGold: '+gold[4:])
+        if item['body']=='/kit':
+            try:
+                file=open('gld/'+str(item['user_id'])+'_kit.txt', 'r')
+            except IOError as e:
+                file=open('gld/'+str(item['user_id'])+'_kit.txt', 'w')
+                file.write(str(time.time()))
+                file.close()
+                file=open('gld/'+str(item['user_id'])+'.txt', 'r')
+                gold=file.read()
+                gold=int(gold[4:])
+                file.close()
+                file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                file.write('gld='+str(gold+25))
+                file.close()
+                write_msg('+25 gold')
+            else:
+                times=int(float(file.read()))
+                if time.time()-times>=15*60:
+                    file=open('gld/'+str(item['user_id'])+'_kit.txt', 'w')
+                    file.write(str(time.time()))
+                    file.close()
+                    file=open('gld/'+str(item['user_id'])+'.txt', 'r')
+                    gold=file.read()
+                    gold=int(gold[4:])
+                    file.close()
+                    file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                    file.write('gld='+str(gold+25))
+                    file.close()
+                    write_msg('+25 gold')
+                else:
+                    write_msg('До следующего золота: '+str((15*60-(int(time.time())-times))//60)+' минут')
+                    
