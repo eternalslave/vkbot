@@ -9,6 +9,7 @@ def online():
     for i in on:
         if i['online']:
             g+=1
-    vk.method('status.set', {'text':u'Текущий Online: '+str(g), 'group_id':150358061})
+        alll+=1
+    vk.method('status.set', {'text':u'Текущий Online: '+str(g)+' | Всего в беседе: '+ str(alll), 'group_id':150358061})
     time.sleep(30)
 online()
