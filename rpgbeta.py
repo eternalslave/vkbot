@@ -2,6 +2,7 @@
 import time
 import vk_api
 import math
+import emoji
 vk = vk_api.VkApi(login = 'artem.ebal@yandex.ru', password = 'ukeahi312ua')
 vk.auth()
 values = {'out': 0,'count': 100,'time_offset': 60}
@@ -53,7 +54,7 @@ while True:
             file=open('gld/'+str(item['user_id'])+'.txt', 'r')
             gold=file.read()
             file.close()
-            write_msg(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u')\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+'\nexp: '+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+'\nGold: '+gold[4:])
+            write_msg(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u')\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':money_with_wings:'))
         if item['body']=='/kit':
             try:
                 file=open('gld/'+str(item['user_id'])+'_kit.txt', 'r')
@@ -68,7 +69,7 @@ while True:
                 file=open('gld/'+str(item['user_id'])+'.txt', 'w')
                 file.write('gld='+str(gold+25))
                 file.close()
-                write_msg('+25 gold')
+                write_msg(emoji.emojize('+25 gold'))
             else:
                 times=int(float(file.read()))
                 if time.time()-times>=15*60:
@@ -82,7 +83,7 @@ while True:
                     file=open('gld/'+str(item['user_id'])+'.txt', 'w')
                     file.write('gld='+str(gold+25))
                     file.close()
-                    write_msg('+25 gold')
+                    write_msg(emoji.emojize('+25 gold'))
                 else:
                     write_msg('До следующего золота: '+str((15*60-(int(time.time())-times))//60)+' минут')
                     
