@@ -56,7 +56,7 @@ while True:
         values['last_message_id'] = response['items'][0]['id']
     for item in response['items']:
             if item['body']=='/help':
-                write_msg(u'/rules - Правила беседы\n/admin - Админ панель\n/kick - Для админов(по id)\n/prikol - мемы')
+                write_msg(u'/rules - Правила беседы\n/admin - Админ панель\n/kick - Для админов(по id)\n/profile - посмотреть свой профиль\n/prikol - мемы')
             if item['body']=='/rules':
                 write_msg(u'правила тут https://vk.com/topic-150358061_35543589')
             if (item['body'][0:5]=='/kick' and (item['user_id']==32191511 or item['user_id']==287948150)): #32191511
