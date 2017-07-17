@@ -3,6 +3,7 @@ import time
 import vk_api
 import math
 import emoji
+import random
 vk = vk_api.VkApi(login = 'artem.ebal@yandex.ru', password = 'ukeahi312ua')
 vk.auth()
 values = {'out': 0,'count': 100,'time_offset': 60}
@@ -86,4 +87,23 @@ while True:
                     write_msg(emoji.emojize('+25 gold'))
                 else:
                     write_msg('До следующего золота: '+str((15*60-(int(time.time())-times))//60)+' минут')
-                    
+        if item['body'][0:5]=='/play':
+            if random.randint(0,1):
+                win=random.randint(50, 150)
+                file=open('gld/'+str(item['user_id'])+'.txt', 'r')
+                gold=file.read()
+                gold=int(gold[4:])
+                file.close()
+                file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                file.write('gld='+str(gold+int((item['body'][6:])*(win/100))))
+                file.close()
+                write_msg('Победа! +'+str(int(int(item['body'][6:])*(win/100))))
+            else:
+                write_msg('габела')
+                file=open('gld/'+str(item['user_id'])+'.txt', 'r')
+                gold=file.read()
+                gold=int(gold[4:])
+                file.close()
+                file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                file.write('gld='+str(gold-int(item['body'][6:])))
+                file.close()
