@@ -15,13 +15,22 @@ while True:
         values['last_message_id'] = response['items'][0]['id']
     for item in response['items']:
         try:
+            file=open('gld/'+str(item['user_id'])+'.txt', 'r')
+            int(float(file.read()[4:]))
+        except IOError as e:
+            file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+            file.write('gld=0')
+            file.close()
+        except ValueError:
+            file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+            file.write('gld=0')
+            file.close()
+            print('valueeror')
+        try:
             file=open('rpg/'+str(item['user_id'])+'.txt', 'r')
         except IOError as e:
             file=open('rpg/'+str(item['user_id'])+'.txt', 'w')
             file.write('exp=1')
-            file.close()
-            file=open('gld/'+str(item['user_id'])+'.txt', 'w')
-            file.write('gld=0')
             file.close()
             file=open('cd/'+str(item['user_id'])+'.txt', 'w')
             file.write(str(time.time()))
@@ -36,10 +45,11 @@ while True:
                 if (math.log(expN/5+1, 2)%1==0):
                     write_msg(u'Грац, @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+u'), с '+str(int(math.log(expN/5+1, 2)))+u' лвлом!\n+'+str(3**int(math.log(expN/5+1, 2))+100)+' gold')
                     gold=open('gld/'+str(item['user_id'])+'.txt', 'r')
-                    current=int(gold.read()[4:])+3**int(math.log(expN/5+1, 2))+100
+                    current=int((float(gold.read()[4:])))+3**int(math.log(expN/5+1, 2))+100
                     gold.close()
                     gold=open('gld/'+str(item['user_id'])+'.txt', 'w')
                     gold.write('gld='+str(current))
+                    gold.close()
                 file=open('rpg/'+str(item['user_id'])+'.txt', 'w')
                 file.write('exp='+str(expN))
                 file.close()
@@ -65,7 +75,7 @@ while True:
                 file.close()
                 file=open('gld/'+str(item['user_id'])+'.txt', 'r')
                 gold=file.read()
-                gold=int(gold[4:])
+                gold=int(float(gold[4:]))
                 file.close()
                 file=open('gld/'+str(item['user_id'])+'.txt', 'w')
                 file.write('gld='+str(gold+25))
@@ -88,24 +98,30 @@ while True:
                 else:
                     write_msg('До следующего золота: '+str((15*60-(int(time.time())-times))//60)+' минут')
         if item['body'][0:5]=='/play':
-            if random.randint(0,1):
-                win=random.randint(50, 150)
-                file=open('gld/'+str(item['user_id'])+'.txt', 'r')
-                gold=file.read()
-                gold=int(gold[4:])
-                file.close()
-                if gold>=int(item['body'][6:]):
-                    file=open('gld/'+str(item['user_id'])+'.txt', 'w')
-                    file.write('gld='+str(gold+int((item['body'][6:])*(win/100))))
-                    file.close()
-                    write_msg('Победа! +'+str(int(int(item['body'][6:])*(win/100))))
+            try:
+                int(item['body'][6:])
+            except ValueError:
+                write_msg('Можно играть только на целые числа')
             else:
-                file=open('gld/'+str(item['user_id'])+'.txt', 'r')
-                gold=file.read()
-                gold=int(gold[4:])
-                file.close()
-                if gold>=int(item['body'][6:]):
-                    file=open('gld/'+str(item['user_id'])+'.txt', 'w')
-                    file.write('gld='+str(gold-int(item['body'][6:])))
+                if random.randint(0,1):
+                    win=random.randint(50, 150)
+                    file=open('gld/'+str(item['user_id'])+'.txt', 'r')
+                    gold=file.read()
+                    gold=int(float(gold[4:]))
                     file.close()
-                    write_msg('габела')
+                    if gold>=int(float(item['body'][6:])) and int(float(item['body'][6:]))>0:
+                        file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                        file.write('gld='+str(gold+int(int(item['body'][6:])*(win/100))))
+                        print(str(int(int(item['body'][6:])*(win/100))))
+                        file.close()
+                        write_msg('Победа! +'+str(int(int(item['body'][6:])*(win/100))))
+                else:
+                    file=open('gld/'+str(item['user_id'])+'.txt', 'r')
+                    gold=file.read()
+                    gold=int(gold[4:])
+                    file.close()
+                    if gold>=int(float(item['body'][6:])) and int(float(item['body'][6:]))>0 :
+                        file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                        file.write('gld='+str(gold-int(item['body'][6:])))
+                        file.close()
+                        write_msg('габела')
