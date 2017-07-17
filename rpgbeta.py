@@ -17,13 +17,22 @@ while True:
         except IOError as e:
             file=open('rpg/'+str(item['user_id'])+'.txt', 'w')
             file.write('exp=1')
+            file.close()
+            file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+            file.write('gld=0')
+            file.close()
+            
         else:
             exp=file.read()
             if exp:
                 expN=float(exp[4:])+1
                 if (math.log(expN/5+1, 2)%1==0):
-                    write_msg(u'Грац, @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+u'), с '+str(int(math.log(expN/5+1, 2)))+u' лвлом!')
-            file.close()
+                    write_msg(u'Грац, @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+u'), с '+str(int(math.log(expN/5+1, 2)))+u' лвлом!\n+'+str(5**int(math.log(expN/5+1, 2))+100)+'gold')
+                    gold=open('gld/'+str(item['user_id'])+'.txt', 'r')
+                    current=int(gold.read()[4:])+5**int(math.log(expN/5+1, 2))+100
+                    gold.close()
+                    gold=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                    gold.write('gld='+str(current))
             file=open('rpg/'+str(item['user_id'])+'.txt', 'w')
             file.write('exp='+str(expN))
             file.close()
@@ -31,4 +40,7 @@ while True:
             file=open('rpg/'+str(item['user_id'])+'.txt', 'r')
             exp=file.read()
             exp=float(exp[4:])
-            write_msg(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u')\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+'\nexp:'+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5))
+            file.close()
+            file=open('gld/'+str(item['user_id'])+'.txt', 'r')
+            gold=file.read()[4:]
+            write_msg(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u')\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+'\nexp:'+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+'\nGOLD: '+gold)
