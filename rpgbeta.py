@@ -7,6 +7,17 @@ import random
 vk = vk_api.VkApi(login = 'artem.ebal@yandex.ru', password = 'ukeahi312ua')
 vk.auth()
 values = {'out': 0,'count': 100,'time_offset': 60}
+def status(id):
+    try:
+        file=open('status/'+str(item['user_id'])+'.txt', 'r')
+    except IOError as e:
+        file=open('status/'+str(item['user_id'])+'.txt', 'w')
+        file.write('User')
+        file.close()
+    else:
+        r=file.read()
+        file.close()
+        return r
 def write_msg(s):
     vk.method('messages.send', {'chat_id':1,'message':s})
 while True:
@@ -65,7 +76,7 @@ while True:
             file=open('gld/'+str(item['user_id'])+'.txt', 'r')
             gold=file.read()
             file.close()
-            write_msg(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u')\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':money_with_wings:'))
+            write_msg(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u')\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':money_with_wings:')+'\nStatus: '+status(item['user_id']))
         if item['body']=='/kit':
             try:
                 file=open('gld/'+str(item['user_id'])+'_kit.txt', 'r')
