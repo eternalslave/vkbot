@@ -17,11 +17,9 @@ def status(id):
     else:
         r=file.read()
         file.close()
-        return str(r)
+        return r
 def write_msg(s):
     vk.method('messages.send', {'chat_id':1,'message':s})
-def gifts(id):
-    return '\nGifts\n———————————————\n'
 while True:
     response = vk.method('messages.get', values)
     if response['items']:
@@ -78,7 +76,7 @@ while True:
             file=open('gld/'+str(item['user_id'])+'.txt', 'r')
             gold=file.read()
             file.close()
-            write_msg(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u')\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':money_with_wings:')+'\nStatus: '+status(item['user_id'])+gifts(item['user_id']))
+            write_msg(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u')\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':money_with_wings:')+'\nStatus: '+status(item['user_id']))
         if item['body']=='/kit':
             try:
                 file=open('gld/'+str(item['user_id'])+'_kit.txt', 'r')
@@ -138,3 +136,41 @@ while True:
                         file.write('gld='+str(gold-int(item['body'][6:])))
                         file.close()
                         write_msg('габела')
+        if item['body'][0:5]=='/give':
+            gg=item['body'][6:].split()
+            if float(gg[0])>0:
+                try:
+                    int(gg[0])
+                except ValueError:
+                    write_msg('Допустимы только целые числа')
+                else:
+                    try:
+                        open('gld/'+str(item['user_id'])+'.txt', 'r')
+                    except IOErros as e:
+                        give=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                        give.write('gld=0')
+                        give.close()
+                    try:
+                        open('gld/'+str(gg[1])+'.txt', 'r')
+                    except IOError as e:
+                        write_msg('Ошибка! /give [id] [кол-во]')
+                    else:
+                        give=open('gld/'+str(item['user_id'])+'.txt', 'r')
+                        ggold=int(give.read()[4:])
+                        give.close()
+                        if ggold>int(gg[0]):
+                            take=open('gld/'+str(gg[1])+'.txt', 'r')
+                            tgold=int(take.read()[4:])
+                            take.close()
+                            give=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                            give.write('gld='+str(ggold-int(gg[0])))
+                            take=open('gld/'+gg[1]+'.txt', 'w')
+                            take.write('gld='+str(ggold+int(gg[0])))
+                            give.close()
+                            take.close()
+                        
+            
+            
+            
+                
+                
