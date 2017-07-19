@@ -180,9 +180,10 @@ while True:
                 i=1
                 gstr=''
                 while i<6:
-                    file=open('gifts/'+i+'.txt')
+                    file=open('gifts/'+str(i)+'.txt')
                     gstr=gstr+file.readline()+'Cost: '+file.readline()+'\n'
                     file.close()
+                    i+=1
                 write_msg(emoji.emojize(gstr, use_aliases=True))
             else:
                 gift=item['body'][6:].split()
@@ -192,7 +193,7 @@ while True:
                 except:
                     write_msg('Ошибка! /gift [id] [id подарка]')
                 else:
-                    if gift[1]>6 or gift[1]<1:
+                    if int(gift[1])>6 or int(gift[1])<1:
                         write_msg('Список подарков /gift list')
                     else:
                         pod=open('gifts/'+gift[1]+'.txt', 'r')
@@ -214,7 +215,7 @@ while True:
                             take=open('gift/'+gift[0]+'.txt', 'w')
                             take.write(takel+smile+' ')
                             take.close()
-                            give=('gld/'+str(item['user_id'])+'.txt', 'w')
+                            give=open('gld/'+str(item['user_id'])+'.txt', 'w')
                             give.write('gld='+str(gold-cost))
                             give.close()
                             write_msg('Подарок отправлен!')
