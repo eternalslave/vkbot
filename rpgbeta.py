@@ -19,7 +19,9 @@ def status(id):
         file.close()
         return r
 def icon(lvl):
-    if lvl>=10 and lvl<20:
+    if lvl<5:
+        return emoji.emojize(':baby:', use_aliases=True)
+    if lvl<10:
         return emoji.emojize(':leaves:', use_aliases=True)
     return emoji.emojize(':sunrise:', use_aliases=True)
 def write_msg(s):
