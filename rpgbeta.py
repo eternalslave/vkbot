@@ -9,6 +9,52 @@ vk = vk_api.VkApi(login = 'artem.ebal@yandex.ru', password = 'ukeahi312ua')
 vk.auth()
 values = {'out': 0,'count': 100,'time_offset': 60}
 gifts_count=len(os.listdir('gifts/'))+1
+doms_count=len(os.listdir('doms/'))+1
+def get_money(id):
+    try:
+        doms=open('dom/'+str(id)+'.txt', 'r')
+    except IOError as e:
+        write_msg('У вас нет имущества')
+    else:
+        try:
+            timer=open('dom/'+str(id)+'_timer.txt', 'r')
+        except IOError as e:
+            timer=open('dom/'+str(id)+'.txt', 'r')
+            
+        else:
+            doms=doms.split('; ')
+            expF=0
+            moneyF=0
+            for dom in doms:
+                file=open('doms/'+str(dom)+'.txt')
+                file.readline()
+                file.readline()
+                expF=expF+file.readline()
+                moneyF=expF+file.readline()
+                file.close()
+            file=open('/rpg'+str(id)+'.txt')
+            expF=expF+int(float(file.read()[4:]))
+            file.close()
+            file.open('/rpg'+str(id)+'.txt', 'w')
+            file.write('exp='+str(expF))
+            file.close()
+            file=open('/gld'+str(id)+'.txt')
+            expF=expF+int(float(file.read()[4:]))
+            file.close()
+            file.open('/gld'+str(id)+'.txt', 'w')
+            file.write('gld='+str(moneyF))
+            file.close()
+def doms(id):
+    r='Own: '
+    try:
+        pod=open('dom/'+str(item['user_id'])+'.txt', 'r')
+    except IOError as e:
+        return r+'nothing'
+    else:
+        doms=pod.read()
+        pod.close()
+        return r+doms
+        
 def status(id):
     try:
         file=open('status/'+str(item['user_id'])+'.txt', 'r')
@@ -120,7 +166,7 @@ while True:
             gold=file.read()
             file.close()
             try:
-                write_msgp(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':moneybag:', use_aliases=True)+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True), item['user_id'])
+                write_msgp(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':moneybag:', use_aliases=True)+'\n'+doms(item['user_id'])+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True), item['user_id'])
             except TypeError:
                 pass
         if item['body']=='/kit':
@@ -265,8 +311,54 @@ while True:
                             give.write('gld='+str(gold-cost))
                             give.close()
                             write_msg('Подарок отправлен! +'+emoji.emojize(smile, use_aliases=True))
-                        
+        if item['body'][0:5]=='/buy ':
+            if item['body'][5:9]=='list':
+                i=1
+                gstr=''
+                while i<doms_count:
+                    file=open('doms/'+str(i)+'.txt')
+                    gstr=gstr+str(i)+') '+file.readline()+'Cost: '+file.readline()+'Exp: '+ file.readline()+'Money: '+file.readline()+'\n'
+                    file.close()
+                    i+=1
+                write_msg(emoji.emojize(gstr, use_aliases=True))
+            else:
+                try:
+                    dom=int(item['body'][5:])
+                except ValueError:
+                    write_msg('Ошибка!\n/buy [id имущества]\n/buy list - список имуществ')
+                else:
+                    get_money(item['user_id'])
+                    pod=open('doms/'+str(dom)+'.txt')
+                    pod.readline()
+                    cost=pod.readline()
+                    cost=int(cost[0:len(cost)-1])
+                    pod.close()
+                    g=open('gld/'+str(item['id_user'])+'.txt')
+                    gold=int(g.read()[4:])
+                    g.close()
+                    if gold>cost:
+                        try:
+                            open('dom/'+str(item['user_id'])+'.txt', 'r')
+                        except IOError as e:
+                            pod=open('dom/'+str(item['user_id'])+'.txt', 'w')
+                            pod.close()
+                        pod=open('dom/'+str(item['user_id'])+'.txt', 'r')
+                        lst=pod.read()
+                        lst=lst.slpit('; ')
+                        pod.close()
+                        lst.append(dom)
+                        pod=open('dom/'+str(item['user_id'])+'.txt', 'w')
+                        current=pod.read()+'; '+lst[len(lst)-1]
+                        pod.write(current)
+                        pod.close()
+                    g=open('gld/'+str(item['id_user'])+'.txt', 'w')
+                    g.write('gld='+str(gold-cost))
+                    g.close()
+        if item['body']=='/withdraw':
+            get_money()
                     
+                    
+                        
             
                         
             
