@@ -55,10 +55,16 @@ def panel():
                                                 go=False
                                                 write_msg('Завершено')
                                                 break
-                                            if item2['user_id']==idd and int(item2['body'], 10)>=0 and int(item2['body'], 10)<num:
-                                                adm.method('messages.removeChatUser', {'chat_id':340, 'user_id':users[int(item2['body'], 10)-1]})
-                                                write_msg('Пользователь удален')
-                                                break
+                                            if item2['user_id']==idd:
+                                                try:
+                                                    int(item2['body'])
+                                                except:
+                                                    pass
+                                                else:
+                                                    if int(item2['body'], 10)>=0 and int(item2['body'], 10)<num:
+                                                        adm.method('messages.removeChatUser', {'chat_id':340, 'user_id':users[int(item2['body'], 10)-1]})
+                                                        write_msg('Пользователь удален')
+                                                        break
                                     break
                                             
                                 if item1['user_id']==idd and item1['body']=='2':
@@ -67,5 +73,5 @@ def panel():
                                     break
                                 if item1['user_id']==idd:
                                     write_msg(u'Выберите пункт')
-        panel()
+panel()
 
