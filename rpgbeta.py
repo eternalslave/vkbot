@@ -14,46 +14,68 @@ def get_money(id):
     try:
         doms=open('dom/'+str(id)+'.txt', 'r')
     except IOError as e:
-        write_msg('У вас нет имущества')
+        pass
     else:
         try:
             timer=open('dom/'+str(id)+'_timer.txt', 'r')
         except IOError as e:
-            timer=open('dom/'+str(id)+'.txt', 'r')
-            
+            timer=open('dom/'+str(id)+'_timer.txt', 'w')
+            timer.write(str(time.time()))
         else:
-            doms=doms.split('; ')
+            times=int((int(time.time())-int(float(timer.read())))/60)
+            timer.close()
+            timer=open('dom/'+str(id)+'_timer.txt', 'w')
+            timer.write(str(time.time()))
+            timer.close()
+            domss=[]
+            while True:
+                l=doms.readline()
+                if l=='':
+                    break
+                domss.append(l[0:len(l)-1])
             expF=0
             moneyF=0
-            for dom in doms:
+            for dom in domss:
                 file=open('doms/'+str(dom)+'.txt')
                 file.readline()
                 file.readline()
-                expF=expF+file.readline()
-                moneyF=expF+file.readline()
+                expF=expF+int(file.readline())
+                moneyF=moneyF+int(file.readline())
                 file.close()
-            file=open('/rpg'+str(id)+'.txt')
-            expF=expF+int(float(file.read()[4:]))
+            file=open('rpg/'+str(id)+'.txt')
+            expF=expF*times
+            cexp=int(float(file.read()[4:]))
             file.close()
-            file.open('/rpg'+str(id)+'.txt', 'w')
-            file.write('exp='+str(expF))
+            file=open('rpg/'+str(id)+'.txt', 'w')
+            file.write('exp='+str(expF+cexp))
             file.close()
-            file=open('/gld'+str(id)+'.txt')
-            expF=expF+int(float(file.read()[4:]))
+            file=open('gld/'+str(id)+'.txt')
+            moneyF=moneyF*times
+            cmoney=int(float(file.read()[4:]))
             file.close()
-            file.open('/gld'+str(id)+'.txt', 'w')
-            file.write('gld='+str(moneyF))
+            file=open('gld/'+str(id)+'.txt', 'w')
+            file.write('gld='+str(moneyF+cmoney))
             file.close()
+            write_msg('Получено:\nexp: '+str(expF)+'\nGold: '+str(moneyF)+'\nЗа последние '+str(times)+' минут')
 def doms(id):
     r='Own: '
     try:
-        pod=open('dom/'+str(item['user_id'])+'.txt', 'r')
+        pod=open('dom/'+str(id)+'.txt', 'r')
     except IOError as e:
         return r+'nothing'
     else:
-        doms=pod.read()
-        pod.close()
-        return r+doms
+        doms=[]
+        while True:
+            l=pod.readline()
+            if l=='':
+                break
+            doms.append(l[0:len(l)-1])
+        for dom in doms:
+            file=open('doms/'+str(dom)+'.txt')
+            r=r+file.readline()
+            r=r[0:len(r)-1]+'; '
+            file.close()
+        return r
         
 def status(id):
     try:
@@ -102,7 +124,7 @@ def write_msgp(s, id):
         vk.method('messages.send', {'chat_id':1,'message':s})
     else:
         try:
-            music=open('audio/'+str(id)+'.txt')
+            music=open('faudio/'+str(id)+'.txt')
         except IOError as e:
             vk.method('messages.send', {'chat_id':1,'message':s, 'attachment':file.read()})
         else:
@@ -166,7 +188,7 @@ while True:
             gold=file.read()
             file.close()
             try:
-                write_msgp(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':moneybag:', use_aliases=True)+'\n'+doms(item['user_id'])+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True), item['user_id'])
+                write_msgp(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':moneybag:', use_aliases=True)+'\n'+emoji.emojize(doms(item['user_id']), use_aliases=True)+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True), item['user_id'])
             except TypeError:
                 pass
         if item['body']=='/kit':
@@ -236,37 +258,43 @@ while True:
                         write_msg('Поражение :(')
         if item['body'][0:6]=='/give ':
             gg=item['body'][6:].split()
-            if float(gg[1])>0:
-                try:
-                    int(gg[1])
-                except ValueError:
-                    write_msg('Допустимы только целые числа')
-                else:
+            try:
+                int(float(gg[1]))
+                int(float(gg[0]))
+            except ValueError:
+                write_msg('Допустимы только целые числа')
+            else:
+                if float(gg[1])>0:
                     try:
-                        open('gld/'+str(item['user_id'])+'.txt', 'r')
-                    except IOErros as e:
-                        give=open('gld/'+str(item['user_id'])+'.txt', 'w')
-                        give.write('gld=0')
-                        give.close()
-                    try:
-                        open('gld/'+str(gg[0])+'.txt', 'r')
-                    except IOError as e:
-                        write_msg('Ошибка! /give [id] [кол-во]')
+                        int(gg[1])
+                    except ValueError:
+                        write_msg('Допустимы только целые числа')
                     else:
-                        give=open('gld/'+str(item['user_id'])+'.txt', 'r')
-                        ggold=int(give.read()[4:])
-                        give.close()
-                        if ggold>int(gg[1]):
-                            take=open('gld/'+str(gg[0])+'.txt', 'r')
-                            tgold=int(take.read()[4:])
-                            take.close()
+                        try:
+                            open('gld/'+str(item['user_id'])+'.txt', 'r')
+                        except IOErros as e:
                             give=open('gld/'+str(item['user_id'])+'.txt', 'w')
-                            give.write('gld='+str(ggold-int(gg[1])))
-                            take=open('gld/'+gg[0]+'.txt', 'w')
-                            take.write('gld='+str(tgold+int(gg[1])))
+                            give.write('gld=0')
                             give.close()
-                            take.close()
-                            write_msg('Успешно!')
+                        try:
+                            open('gld/'+str(gg[0])+'.txt', 'r')
+                        except IOError as e:
+                            write_msg('Ошибка! /give [id] [кол-во]')
+                        else:
+                            give=open('gld/'+str(item['user_id'])+'.txt', 'r')
+                            ggold=int(give.read()[4:])
+                            give.close()
+                            if ggold>int(gg[1]):
+                                take=open('gld/'+str(gg[0])+'.txt', 'r')
+                                tgold=int(take.read()[4:])
+                                take.close()
+                                give=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                                give.write('gld='+str(ggold-int(gg[1])))
+                                take=open('gld/'+gg[0]+'.txt', 'w')
+                                take.write('gld='+str(tgold+int(gg[1])))
+                                give.close()
+                                take.close()
+                                write_msg('Успешно!')
         if item['body'][0:6]=='/gift ':
             if item['body'][6:10]=='list':
                 i=1
@@ -314,10 +342,10 @@ while True:
         if item['body'][0:5]=='/buy ':
             if item['body'][5:9]=='list':
                 i=1
-                gstr=''
+                gstr='Список имуществ для покупки: \n'
                 while i<doms_count:
                     file=open('doms/'+str(i)+'.txt')
-                    gstr=gstr+str(i)+') '+file.readline()+'Cost: '+file.readline()+'Exp: '+ file.readline()+'Money: '+file.readline()+'\n'
+                    gstr=gstr+str(i)+') '+file.readline()+'Cost: '+file.readline()+'Exp/min: '+ file.readline()+'Money/min: '+file.readline()+'\n'
                     file.close()
                     i+=1
                 write_msg(emoji.emojize(gstr, use_aliases=True))
@@ -327,35 +355,37 @@ while True:
                 except ValueError:
                     write_msg('Ошибка!\n/buy [id имущества]\n/buy list - список имуществ')
                 else:
-                    get_money(item['user_id'])
-                    pod=open('doms/'+str(dom)+'.txt')
-                    pod.readline()
-                    cost=pod.readline()
-                    cost=int(cost[0:len(cost)-1])
-                    pod.close()
-                    g=open('gld/'+str(item['id_user'])+'.txt')
-                    gold=int(g.read()[4:])
-                    g.close()
-                    if gold>cost:
-                        try:
-                            open('dom/'+str(item['user_id'])+'.txt', 'r')
-                        except IOError as e:
-                            pod=open('dom/'+str(item['user_id'])+'.txt', 'w')
+                    if doms_count<dom or dom<0:
+                        write_msg('/buy list - список имущества')
+                    else:
+                        get_money(item['user_id'])
+                        pod=open('doms/'+str(dom)+'.txt')
+                        name=pod.readline()
+                        cost=pod.readline()
+                        cost=int(cost[0:len(cost)-1])
+                        pod.close()
+                        g=open('gld/'+str(item['user_id'])+'.txt')
+                        gold=int(g.read()[4:])
+                        g.close()
+                        if gold>cost:
+                            try:
+                                open('dom/'+str(item['user_id'])+'.txt', 'r')
+                            except IOError as e:
+                                pod=open('dom/'+str(item['user_id'])+'.txt', 'w')
+                                pod.close()
+                            pod=open('dom/'+str(item['user_id'])+'.txt', 'r')
+                            lst=pod.read()
                             pod.close()
-                        pod=open('dom/'+str(item['user_id'])+'.txt', 'r')
-                        lst=pod.read()
-                        lst=lst.slpit('; ')
-                        pod.close()
-                        lst.append(dom)
-                        pod=open('dom/'+str(item['user_id'])+'.txt', 'w')
-                        current=pod.read()+'; '+lst[len(lst)-1]
-                        pod.write(current)
-                        pod.close()
-                    g=open('gld/'+str(item['id_user'])+'.txt', 'w')
-                    g.write('gld='+str(gold-cost))
-                    g.close()
+                            pod=open('dom/'+str(item['user_id'])+'.txt', 'w')
+                            current=lst+str(dom)+'\n'
+                            pod.write(current)
+                            pod.close()
+                            g=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                            g.write('gld='+str(gold-cost))
+                            g.close()
+                            write_msg('Вы приобрели: '+name)
         if item['body']=='/withdraw':
-            get_money()
+            get_money(item['user_id'])
                     
                     
                         
