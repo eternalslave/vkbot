@@ -21,7 +21,10 @@ def adder():
     if rqst:
         for id in rqst['items']:
             vk.method('friends.add', {'user_id':id})
-            vk.method('messages.addChatUser', {'chat_id':1, 'user_id':id})
+            try:
+                vk.method('messages.addChatUser', {'chat_id':1, 'user_id':id})
+            except:
+                pass
             vk.method('account.banUser', {'user_id':id})
             us=vk.method('users.get', {'user_ids':id})
             write_msg(u'Добро пожаловать в =добро пожаловать=, '+us[0]['first_name']+u'! \n/help - Спиок комманд\nПодпишись на нашь паблик super good) https://vk.com/dobropojalovatv12')
