@@ -135,7 +135,7 @@ while True:
                         file=open('gld/'+str(item['user_id'])+'.txt', 'w')
                         file.write('gld='+str(gold-int(item['body'][6:])))
                         file.close()
-                        write_msg('габела')
+                        write_msg('Поражение :(')
         if item['body'][0:5]=='/give':
             gg=item['body'][6:].split()
             if float(gg[0])>0:
@@ -165,9 +165,10 @@ while True:
                             give=open('gld/'+str(item['user_id'])+'.txt', 'w')
                             give.write('gld='+str(ggold-int(gg[0])))
                             take=open('gld/'+gg[1]+'.txt', 'w')
-                            take.write('gld='+str(ggold+int(gg[0])))
+                            take.write('gld='+str(tgold+int(gg[0])))
                             give.close()
                             take.close()
+                            write_msg('Успешно!')
                         
             
             
