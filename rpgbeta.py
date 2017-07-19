@@ -7,6 +7,9 @@ import random
 vk = vk_api.VkApi(login = 'artem.ebal@yandex.ru', password = 'ukeahi312ua')
 vk.auth()
 values = {'out': 0,'count': 100,'time_offset': 60}
+count=open('gifts/count.txt', 'r')
+gifts_count=int(count.read())+1
+count.close()
 def status(id):
     try:
         file=open('status/'+str(item['user_id'])+'.txt', 'r')
@@ -25,7 +28,7 @@ def icon(lvl):
         return emoji.emojize(':leaves:', use_aliases=True)
     return emoji.emojize(':sunrise:', use_aliases=True)
 def gifts(id):
-    ret='Gifts\n\n'
+    ret='\nGifts\n—————————————————————\n'
     try:
         gift=open('gift/'+str(id)+'.txt')
     except IOError as e:
@@ -190,9 +193,9 @@ while True:
             if item['body'][6:10]=='list':
                 i=1
                 gstr=''
-                while i<6:
+                while i<gifts_count:
                     file=open('gifts/'+str(i)+'.txt')
-                    gstr=gstr+file.readline()+'Cost: '+file.readline()+'\n'
+                    gstr=gstr+str(i)+') '+file.readline()+'Cost: '+file.readline()+'\n'
                     file.close()
                     i+=1
                 write_msg(emoji.emojize(gstr, use_aliases=True))
@@ -202,9 +205,9 @@ while True:
                     int(gift[0])
                     int(gift[1])
                 except:
-                    write_msg('Ошибка! /gift [id] [id подарка]')
+                    write_msg('Ошибка! \n/gift [id] [id подарка]\n/gift list - список подарков')
                 else:
-                    if int(gift[1])>6 or int(gift[1])<1:
+                    if int(gift[1])>gifts_count or int(gift[1])<1:
                         write_msg('Список подарков /gift list')
                     else:
                         pod=open('gifts/'+gift[1]+'.txt', 'r')
