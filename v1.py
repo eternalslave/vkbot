@@ -60,7 +60,7 @@ while True:
         values['last_message_id'] = response['items'][0]['id']
     for item in response['items']:
             if item['body']=='/help':
-                write_msg(u'Список комманд:\n/rules - Правила беседы\n/profile - посмотреть свой профиль\n/prikol - мемы\n/kit - 25 золота каждые 15 минут\n/play [кол-во] - сыграть на голду (выигрышь от 50% до 150% от ставки)\n /give [кол-во] [id] - передать деньги\nhttps://vk.com/dobropojalovatv12 - Группа вк')
+                write_msg(u'Список комманд:\n/rules - Правила беседы\n/profile - посмотреть свой профиль\n/prikol - мемы\n/kit - 25 золота каждые 15 минут\n/play [кол-во] - сыграть на голду (выигрышь от 50% до 150% от ставки)\n /give [кол-во] [id] - передать деньги\n/gift [id] [id подарка] - подарить подарок\n/gift list - список подарков\nhttps://vk.com/dobropojalovatv12 - Группа вк')
             if item['body']=='/rules':
                 write_msg(u'правила тут https://vk.com/topic-150358061_35543589')
             if (item['body'][0:5]=='/kick' and (item['user_id']==32191511 or item['user_id']==287948150)): #32191511
