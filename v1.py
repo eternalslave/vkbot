@@ -7,7 +7,6 @@ vk.auth()
 adm = vk_api.VkApi(login = 'dark.fusrodah@gmail.com', password = 'srn1wpua')
 adm.auth()
 timer1 = time.time()
-timer2 = time.time()
 timer3 = time.time()-60*36
 def write_msg(s):
     vk.method('messages.send', {'chat_id':1,'message':s})
@@ -39,14 +38,6 @@ while True:
     if (time.time()-timer1>=60*60):
             timer1 = time.time()
             write_msg(u'Вступай в нашу группу вк - https://vk.com/dobropojalovatv12 :Р \nСписок комманд: /help')
-    if (time.time()-timer2>=60*35):
-            timer2 = time.time()
-            post=vk.method('wall.get', {'domain':'brat_feed', 'count':100})
-            while True:
-                b=random.randint(0, 100)
-                if post['items'][b]['text']:
-                    write_msg(post['items'][b]['text'])
-                    break
     if (time.time()-timer3>=60*35):
             timer3 = time.time()
             post=vk.method('wall.get', {'domain':'onsmolny', 'count':100})
@@ -62,7 +53,7 @@ while True:
             if item['body']=='/id':
                 write_msg(str(item['user_id']))
             if item['body']=='/help':
-                write_msg(u'Список комманд:\n/rules - Правила беседы\n/profile - посмотреть свой профиль\n/prikol - мемы\n/kit - 25 золота каждые 15 минут\n/play [кол-во] - сыграть на голду (выигрышь от 50% до 150% от ставки)\n /give [id] [кол-во] - передать деньги\n/gift [id] [id подарка] - подарить подарок\n/gift list - список подарков\n/id - Получить свой id в чате\nhttps://vk.com/dobropojalovatv12 - Группа вк')
+                write_msg(u'Список комманд:\n/rules - Правила беседы\n/profile - посмотреть свой профиль\n/prikol - мемы\n/kit - золото каждые 15 минут (кол-во зависит от уровня)\n/play [кол-во] - сыграть на голду (upd. выигрышь от 150% до 250% от ставки, шанс 20%)\n /give [id] [кол-во] - передать деньги\n/gift [id] [id подарка] - подарить подарок\n/gift list - список подарков\n/id - Получить свой id в чате\nhttps://vk.com/dobropojalovatv12 - Группа вк')
             if item['body']=='/rules':
                 write_msg(u'правила тут https://vk.com/topic-150358061_35543589')
             if (item['body'][0:5]=='/kick' and (item['user_id']==32191511 or item['user_id']==287948150)): #32191511

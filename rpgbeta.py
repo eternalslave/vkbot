@@ -8,7 +8,7 @@ import os
 vk = vk_api.VkApi(login = 'artem.ebal@yandex.ru', password = 'ukeahi312ua')
 vk.auth()
 values = {'out': 0,'count': 100,'time_offset': 60}
-gifts_count=len(os.listdir('gifts/'))
+gifts_count=len(os.listdir('gifts/'))+1
 def status(id):
     try:
         file=open('status/'+str(item['user_id'])+'.txt', 'r')
@@ -19,15 +19,25 @@ def status(id):
     else:
         r=file.read()
         file.close()
+        if r=='Admin':
+            return r+' '+emoji.emojize(':hammer:', use_aliases=True)
         return r
 def icon(lvl):
     if lvl<5:
         return emoji.emojize(':baby:', use_aliases=True)
-    if lvl<10:
+    if lvl<6:
         return emoji.emojize(':leaves:', use_aliases=True)
-    return emoji.emojize(':sunrise:', use_aliases=True)
+    if lvl<7:
+        return emoji.emojize(':four_leaf_clover:', use_aliases=True)
+    if lvl<8:
+        return emoji.emojize(':hibiscus:', use_aliases=True)
+    if lvl<9:
+        return emoji.emojize(':zap:', use_aliases=True)
+    if lvl<10:
+        return emoji.emojize(':cloud:', use_aliases=True)
+    return emoji.emojize(':ocean:', use_aliases=True)
 def gifts(id):
-    ret='\nGifts\n—————————————————————————————\n'
+    ret='\nGifts\n——————————————————————\n'
     try:
         gift=open('gift/'+str(id)+'.txt')
     except IOError as e:
@@ -36,7 +46,7 @@ def gifts(id):
         giftss=gift.read()
         gift.close()
         ret=ret+giftss
-    return ret+'\n—————————————————————————————'
+    return ret+'\n——————————————————————'
 def write_msg(s):
     vk.method('messages.send', {'chat_id':1,'message':s})
 def write_msgp(s, id):
@@ -45,7 +55,13 @@ def write_msgp(s, id):
     except IOError as e:
         vk.method('messages.send', {'chat_id':1,'message':s})
     else:
-        vk.method('messages.send', {'chat_id':1,'message':s, 'attachment':file.read()})
+        try:
+            music=open('audio/'+str(id)+'.txt')
+        except IOError as e:
+            vk.method('messages.send', {'chat_id':1,'message':s, 'attachment':file.read()})
+        else:
+            vk.method('messages.send', {'chat_id':1,'message':s, 'attachment':file.read()+','+music.read()})
+            music.close()
         file.close()
 while True:
     response = vk.method('messages.get', values)
@@ -104,7 +120,7 @@ while True:
             gold=file.read()
             file.close()
             try:
-                write_msgp(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':money_with_wings:')+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True), item['user_id'])
+                write_msgp(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':moneybag:', use_aliases=True)+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True), item['user_id'])
             except TypeError:
                 pass
         if item['body']=='/kit':
@@ -150,8 +166,8 @@ while True:
             except ValueError:
                 write_msg('Можно играть только на целые числа')
             else:
-                if random.randint(0,1):
-                    win=random.randint(50, 150)
+                if random.randint(0,10)<3:
+                    win=random.randint(150, 250)
                     file=open('gld/'+str(item['user_id'])+'.txt', 'r')
                     gold=file.read()
                     gold=int(float(gold[4:]))
