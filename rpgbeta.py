@@ -37,11 +37,17 @@ def gifts(id):
         giftss=gift.read()
         gift.close()
         ret=ret+giftss
-    return ret
+    return ret+'\n—————————————————————'
 def write_msg(s):
     vk.method('messages.send', {'chat_id':1,'message':s})
-def write_msg1(s):
-    vk.method('messages.send', {'chat_id':1,'message':s})
+def write_p(s, id):
+    try:
+        file=open('photo/'+str(id)+'.txt')
+    except IOError as e:
+        vk.method('messages.send', {'chat_id':1,'message':s})
+    else:
+        vk.method('messages.send', {'chat_id':1,'message':s, 'attachment':file.read()})
+        file.close()
 while True:
     response = vk.method('messages.get', values)
     if response['items']:
@@ -98,7 +104,7 @@ while True:
             file=open('gld/'+str(item['user_id'])+'.txt', 'r')
             gold=file.read()
             file.close()
-            write_msg(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':money_with_wings:')+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True))
+            write_msgp(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':money_with_wings:')+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True), item['user_id'])
         if item['body']=='/kit':
             try:
                 file=open('gld/'+str(item['user_id'])+'_kit.txt', 'r')
