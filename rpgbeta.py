@@ -175,6 +175,52 @@ while True:
                             give.close()
                             take.close()
                             write_msg('Успешно!')
+        if item['body'][0:5]=='/gift':
+            if item['body'][6:10]=='list':
+                i=1
+                gstr=''
+                while i<6:
+                    file=open('gifts/'+i+'.txt')
+                    gstr=gstr+file.readline()+'Cost: '+file.readline()+'\n'
+                    file.close()
+                write_msg(emoji.emojize(gstr, use_aliases=True))
+            else:
+                gift=item['body'][6:].split()
+                try:
+                    int(gift[0])
+                    int(gift[1])
+                except:
+                    write_msg('Ошибка! /gift [id] [id подарка]')
+                else:
+                    if gift[1]>6 or gift[1]<1:
+                        write_msg('Список подарков /gift list')
+                    else:
+                        pod=open('gifts/'+gift[1]+'.txt', 'r')
+                        smile=pod.readline()
+                        smile=smile[0:len(smile)-1]
+                        cost=int(pod.readline())
+                        pod.close()
+                        give=open('gld/'+str(item['user_id'])+'.txt', 'r')
+                        gold=int(give.read()[4:])
+                        give.close()
+                        if gold>cost:
+                            try:
+                                open('gift/'+gift[0]+'.txt', 'r')
+                            except IOError as e:
+                                open('gift/'+gift[0]+'.txt', 'w')
+                            take=open('gift/'+gift[0]+'.txt', 'r')
+                            takel=take.read()
+                            take.close()
+                            take=open('gift/'+gift[0]+'.txt', 'w')
+                            take.write(takel+smile+' ')
+                            take.close()
+                            give=('gld/'+str(item['user_id'])+'.txt', 'w')
+                            give.write('gld='+str(gold-cost))
+                            give.close()
+                            write_msg('Подарок отправлен!')
+                        
+                    
+            
                         
             
             
