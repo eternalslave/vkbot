@@ -4,12 +4,11 @@ import vk_api
 import math
 import emoji
 import random
+import os
 vk = vk_api.VkApi(login = 'artem.ebal@yandex.ru', password = 'ukeahi312ua')
 vk.auth()
 values = {'out': 0,'count': 100,'time_offset': 60}
-count=open('gifts/count.txt', 'r')
-gifts_count=int(count.read())+1
-count.close()
+gifts_count=len(os.listdir('gifts/'))
 def status(id):
     try:
         file=open('status/'+str(item['user_id'])+'.txt', 'r')
