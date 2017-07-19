@@ -24,10 +24,11 @@ def adder():
             try:
                 vk.method('messages.addChatUser', {'chat_id':1, 'user_id':id})
             except:
-                pass
+                vk.method('messages.send', {'user_id':id, 'message':'Ты уже есть в беседе'})
+            else:
+                us=vk.method('users.get', {'user_ids':id})
+                write_msg(u'Добро пожаловать в =добро пожаловать=, '+us[0]['first_name']+u'! \n/help - Спиок комманд\nПодпишись на нашь паблик - https://vk.com/dobropojalovatv12')
             vk.method('account.banUser', {'user_id':id})
-            us=vk.method('users.get', {'user_ids':id})
-            write_msg(u'Добро пожаловать в =добро пожаловать=, '+us[0]['first_name']+u'! \n/help - Спиок комманд\nПодпишись на нашь паблик super good) https://vk.com/dobropojalovatv12')
 def kicker(name):
     adm.method('messages.removeChatUser', {'chat_id':340, 'user_id':name})
     write_msg(u'Succes затролил лолку)')    
@@ -37,7 +38,7 @@ while True:
     adder()
     if (time.time()-timer1>=60*60):
             timer1 = time.time()
-            write_msg(u'Вступай в нашу группу вк!! https://vk.com/dobropojalovatv12 :Р \nСписок комманд: /help')
+            write_msg(u'Вступай в нашу группу вк - https://vk.com/dobropojalovatv12 :Р \nСписок комманд: /help')
     if (time.time()-timer2>=60*35):
             timer2 = time.time()
             post=vk.method('wall.get', {'domain':'brat_feed', 'count':100})
@@ -59,7 +60,7 @@ while True:
         values['last_message_id'] = response['items'][0]['id']
     for item in response['items']:
             if item['body']=='/help':
-                write_msg(u'/rules - Правила беседы\n/profile - посмотреть свой профиль\n/prikol - мемы\n/kit - 25 золота каждые 15 минут\n/play [кол-во] - сыграть на голду (выигрышь от 50% до 150% от ставки)\n /give [кол-во] [id] - передать деньги\nhttps://vk.com/dobropojalovatv12 - Группа вк')
+                write_msg(u'Список комманд:\n/rules - Правила беседы\n/profile - посмотреть свой профиль\n/prikol - мемы\n/kit - 25 золота каждые 15 минут\n/play [кол-во] - сыграть на голду (выигрышь от 50% до 150% от ставки)\n /give [кол-во] [id] - передать деньги\nhttps://vk.com/dobropojalovatv12 - Группа вк')
             if item['body']=='/rules':
                 write_msg(u'правила тут https://vk.com/topic-150358061_35543589')
             if (item['body'][0:5]=='/kick' and (item['user_id']==32191511 or item['user_id']==287948150)): #32191511
