@@ -28,7 +28,7 @@ def icon(lvl):
         return emoji.emojize(':leaves:', use_aliases=True)
     return emoji.emojize(':sunrise:', use_aliases=True)
 def gifts(id):
-    ret='\nGifts\n—————————————————————\n'
+    ret='\nGifts\n—————————————————————————————\n'
     try:
         gift=open('gift/'+str(id)+'.txt')
     except IOError as e:
@@ -37,10 +37,10 @@ def gifts(id):
         giftss=gift.read()
         gift.close()
         ret=ret+giftss
-    return ret+'\n—————————————————————'
+    return ret+'\n—————————————————————————————'
 def write_msg(s):
     vk.method('messages.send', {'chat_id':1,'message':s})
-def write_p(s, id):
+def write_msgp(s, id):
     try:
         file=open('photo/'+str(id)+'.txt')
     except IOError as e:
@@ -104,7 +104,10 @@ while True:
             file=open('gld/'+str(item['user_id'])+'.txt', 'r')
             gold=file.read()
             file.close()
-            write_msgp(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':money_with_wings:')+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True), item['user_id'])
+            try:
+                write_msgp(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':money_with_wings:')+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True), item['user_id'])
+            except TypeError:
+                pass
         if item['body']=='/kit':
             try:
                 file=open('gld/'+str(item['user_id'])+'_kit.txt', 'r')
@@ -112,14 +115,17 @@ while True:
                 file=open('gld/'+str(item['user_id'])+'_kit.txt', 'w')
                 file.write(str(time.time()))
                 file.close()
+                file=open('rpg/'+str(item['user_id'])+'.txt', 'r')
+                exp=int(float(file.read()[4:]))
+                file.close()
                 file=open('gld/'+str(item['user_id'])+'.txt', 'r')
                 gold=file.read()
                 gold=int(float(gold[4:]))
                 file.close()
                 file=open('gld/'+str(item['user_id'])+'.txt', 'w')
-                file.write('gld='+str(gold+25))
+                file.write('gld='+str(gold+25+int(math.log(int(exp)/5+1, 2))**3))
                 file.close()
-                write_msg(emoji.emojize('+25 gold'))
+                write_msg('+'+str(25+int(math.log(int(exp)/5+1, 2))**3)+'gold')
             else:
                 times=int(float(file.read()))
                 if time.time()-times>=15*60:
@@ -130,10 +136,13 @@ while True:
                     gold=file.read()
                     gold=int(gold[4:])
                     file.close()
-                    file=open('gld/'+str(item['user_id'])+'.txt', 'w')
-                    file.write('gld='+str(gold+25))
+                    file=open('rpg/'+str(item['user_id'])+'.txt', 'r')
+                    exp=int(float(file.read()[4:]))
                     file.close()
-                    write_msg(emoji.emojize('+25 gold'))
+                    file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                    file.write('gld='+str(gold+25+int(math.log(int(exp)/5+1, 2))**3))
+                    file.close()
+                    write_msg('+'+str(25+int(math.log(int(exp)/5+1, 2))**3)+'gold')
                 else:
                     write_msg('До следующего золота: '+str((15*60-(int(time.time())-times))//60)+' минут')
         if item['body'][0:6]=='/play ':
