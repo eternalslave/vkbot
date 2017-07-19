@@ -207,8 +207,8 @@ while True:
                 except:
                     write_msg('Ошибка! \n/gift [id] [id подарка]\n/gift list - список подарков')
                 else:
-                    if int(gift[1])>gifts_count or int(gift[1])<1:
-                        write_msg('Ошибка! \n/gift [id] [id подарка]\n/gift list - список подарков')
+                    if int(gift[1])>gifts_count or int(gift[1])<1 or item['user_id']==int(gift[0]):
+                        write_msg('Ошибка! \n/gift [id] [id подарка]\n/gift list - список подарков\nСебе подарки дарить нельзя')
                     else:
                         pod=open('gifts/'+gift[1]+'.txt', 'r')
                         smile=pod.readline()
