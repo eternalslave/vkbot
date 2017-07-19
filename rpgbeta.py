@@ -40,6 +40,8 @@ def gifts(id):
     return ret
 def write_msg(s):
     vk.method('messages.send', {'chat_id':1,'message':s})
+def write_msg1(s):
+    vk.method('messages.send', {'chat_id':1,'message':s})
 while True:
     response = vk.method('messages.get', values)
     if response['items']:
@@ -158,9 +160,9 @@ while True:
                         write_msg('Поражение :(')
         if item['body'][0:6]=='/give ':
             gg=item['body'][6:].split()
-            if float(gg[0])>0:
+            if float(gg[1])>0:
                 try:
-                    int(gg[0])
+                    int(gg[1])
                 except ValueError:
                     write_msg('Допустимы только целые числа')
                 else:
@@ -171,21 +173,21 @@ while True:
                         give.write('gld=0')
                         give.close()
                     try:
-                        open('gld/'+str(gg[1])+'.txt', 'r')
+                        open('gld/'+str(gg[0])+'.txt', 'r')
                     except IOError as e:
                         write_msg('Ошибка! /give [id] [кол-во]')
                     else:
                         give=open('gld/'+str(item['user_id'])+'.txt', 'r')
                         ggold=int(give.read()[4:])
                         give.close()
-                        if ggold>int(gg[0]):
-                            take=open('gld/'+str(gg[1])+'.txt', 'r')
+                        if ggold>int(gg[1]):
+                            take=open('gld/'+str(gg[0])+'.txt', 'r')
                             tgold=int(take.read()[4:])
                             take.close()
                             give=open('gld/'+str(item['user_id'])+'.txt', 'w')
-                            give.write('gld='+str(ggold-int(gg[0])))
-                            take=open('gld/'+gg[1]+'.txt', 'w')
-                            take.write('gld='+str(tgold+int(gg[0])))
+                            give.write('gld='+str(ggold-int(gg[1])))
+                            take=open('gld/'+gg[0]+'.txt', 'w')
+                            take.write('gld='+str(tgold+int(gg[1])))
                             give.close()
                             take.close()
                             write_msg('Успешно!')
