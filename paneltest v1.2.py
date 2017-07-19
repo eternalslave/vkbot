@@ -37,13 +37,12 @@ def panel():
                                 if item1['user_id']==idd and item1['body']=='1':
                                     write_msg('Загружается список..')
                                     lst=adm.method('messages.getChatUsers', {'chat_id':340})
-                                    lst=', '.join(list)
-                                    lst=bot.method('users.get', {'user_ids':lst})
+                                    lst=bot.method('users.get', {'user_ids':str(lst)[1:len(str(lst))-1]})
                                     num=1
                                     usersSTR='Выберите пользователя:\n'
                                     for id in lst:
-                                        usersSTR=usersSTR+num+') '+ lst[num-1]['first_name']+' '+lst[num-1]['last_name']+'; '
-                                        num=+1
+                                        usersSTR=usersSTR+str(num)+') '+ lst[num-1]['first_name']+' '+lst[num-1]['last_name']+'; '
+                                        num+=1
                                     write_msg(usersSTR)
                                     while go:
                                         response = bot.method('messages.get', values)
@@ -61,7 +60,7 @@ def panel():
                                                     pass
                                                 else:
                                                     if int(item2['body'], 10)>=0 and int(item2['body'], 10)<num:
-                                                        adm.method('messages.removeChatUser', {'chat_id':340, 'user_id':lst[int(item2['body'])-1]})
+                                                        adm.method('messages.removeChatUser', {'chat_id':340, 'user_id':lst[int(item2['body'])-1]['id']})
                                                         write_msg('Пользователь удален')
                                                         break
                                     break
