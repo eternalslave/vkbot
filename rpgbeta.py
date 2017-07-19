@@ -128,7 +128,7 @@ while True:
                     write_msg(emoji.emojize('+25 gold'))
                 else:
                     write_msg('До следующего золота: '+str((15*60-(int(time.time())-times))//60)+' минут')
-        if item['body'][0:5]=='/play':
+        if item['body'][0:6]=='/play ':
             try:
                 int(item['body'][6:])
             except ValueError:
@@ -156,7 +156,7 @@ while True:
                         file.write('gld='+str(gold-int(item['body'][6:])))
                         file.close()
                         write_msg('Поражение :(')
-        if item['body'][0:5]=='/give':
+        if item['body'][0:6]=='/give ':
             gg=item['body'][6:].split()
             if float(gg[0])>0:
                 try:
@@ -189,7 +189,7 @@ while True:
                             give.close()
                             take.close()
                             write_msg('Успешно!')
-        if item['body'][0:5]=='/gift':
+        if item['body'][0:6]=='/gift ':
             if item['body'][6:10]=='list':
                 i=1
                 gstr=''
@@ -208,7 +208,7 @@ while True:
                     write_msg('Ошибка! \n/gift [id] [id подарка]\n/gift list - список подарков')
                 else:
                     if int(gift[1])>gifts_count or int(gift[1])<1:
-                        write_msg('Список подарков /gift list')
+                        write_msg('Ошибка! \n/gift [id] [id подарка]\n/gift list - список подарков')
                     else:
                         pod=open('gifts/'+gift[1]+'.txt', 'r')
                         smile=pod.readline()
@@ -232,7 +232,7 @@ while True:
                             give=open('gld/'+str(item['user_id'])+'.txt', 'w')
                             give.write('gld='+str(gold-cost))
                             give.close()
-                            write_msg('Подарок отправлен!')
+                            write_msg('Подарок отправлен! +'+emoji.emojize(smile, use_aliases=True))
                         
                     
             
