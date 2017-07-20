@@ -103,7 +103,15 @@ def icon(lvl):
         return emoji.emojize(':zap:', use_aliases=True)
     if lvl<10:
         return emoji.emojize(':cloud:', use_aliases=True)
-    return emoji.emojize(':ocean:', use_aliases=True)
+    if lvl<11:
+        return emoji.emojize(':crescent_moon:', use_aliases=True)
+    if lvl<12:
+        return emoji.emojize(':ocean:', use_aliases=True)
+    if lvl<13:
+        return emoji.emojize(':city_sunset:', use_aliases=True)
+    if lvl<14:
+        return emoji.emojize(':japanese_castle:', use_aliases=True)
+    return emoji.emojize(':volcano:', use_aliases=True)
 def gifts(id):
     ret='\nGifts\n——————————————————————\n'
     try:
@@ -234,8 +242,8 @@ while True:
             except ValueError:
                 write_msg('Можно играть только на целые числа')
             else:
-                if random.randint(0,10)<3:
-                    win=random.randint(150, 250)
+                if random.randint(0,1):
+                    win=random.randint(50, 150)
                     file=open('gld/'+str(item['user_id'])+'.txt', 'r')
                     gold=file.read()
                     gold=int(float(gold[4:]))
@@ -284,7 +292,7 @@ while True:
                             give=open('gld/'+str(item['user_id'])+'.txt', 'r')
                             ggold=int(give.read()[4:])
                             give.close()
-                            if ggold>int(gg[1]):
+                            if ggold>=int(gg[1]):
                                 take=open('gld/'+str(gg[0])+'.txt', 'r')
                                 tgold=int(take.read()[4:])
                                 take.close()
@@ -358,7 +366,6 @@ while True:
                     if doms_count<dom or dom<0:
                         write_msg('/buy list - список имущества')
                     else:
-                        get_money(item['user_id'])
                         pod=open('doms/'+str(dom)+'.txt')
                         name=pod.readline()
                         cost=pod.readline()
@@ -376,14 +383,32 @@ while True:
                             pod=open('dom/'+str(item['user_id'])+'.txt', 'r')
                             lst=pod.read()
                             pod.close()
-                            pod=open('dom/'+str(item['user_id'])+'.txt', 'w')
-                            current=lst+str(dom)+'\n'
-                            pod.write(current)
+                            pod=open('dom/'+str(item['user_id'])+'.txt', 'r')
+                            i=1
+                            ok=True
+                            while True:
+                                chek=pod.readline()
+                                if chek=='':
+                                    break
+                                if (chek[0:len(chek)-1]=='2' or chek[0:len(chek)-1]=='3')and chek[0:len(chek)-1]==str(dom):
+                                    ok=False
+                                    break
                             pod.close()
-                            g=open('gld/'+str(item['user_id'])+'.txt', 'w')
-                            g.write('gld='+str(gold-cost))
-                            g.close()
-                            write_msg('Вы приобрели: '+name)
+                            if ok:
+                                get_money(item['user_id'])
+                                pod=open('dom/'+str(item['user_id'])+'.txt', 'w')
+                                current=lst+str(dom)+'\n'
+                                pod.write(current)
+                                pod.close()
+                                g=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                                g.write('gld='+str(gold-cost))
+                                g.close()
+                                write_msg('Вы приобрели: '+emoji.emojize(name, use_aliases=True))
+                            else:
+                                file=open('doms/'+chek[0:len(chek)-1]+'.txt')
+                                chek=file.readline()
+                                file.close()
+                                write_msg('У вас уже есть '+emoji.emojize(chek[0:len(chek)-1], use_aliases=True))
         if item['body']=='/withdraw':
             get_money(item['user_id'])
                     

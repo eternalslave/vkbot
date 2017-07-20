@@ -12,6 +12,6 @@ def online():
             g+=1
         alll+=1
     vk.method('status.set', {'text':u'Текущий Online: '+str(g)+u' | Всего в беседе: '+ str(alll), 'group_id':150358061})
-    time.sleep(30)
+    time.sleep(60*15)
 while True:
     online()
