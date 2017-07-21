@@ -9,7 +9,11 @@ adm.auth()
 timer1 = time.time()
 timer3 = time.time()-60*36
 def write_msg(s):
-    vk.method('messages.send', {'chat_id':1,'message':s})
+    try:
+        vk.method('messages.send', {'chat_id':1,'message':s})
+    except:
+        adm.method('messages.send', {'chat_id':340, 'message':'Рестарт бота через 5 минут'})
+        time.sleep(60*5)
 values = {'out': 0,'count': 100,'time_offset': 60}
 def name():
     title=adm.method('messages.getChat', {'chat_id':340})
@@ -53,7 +57,7 @@ while True:
             if item['body']=='/id':
                 write_msg(str(item['user_id']))
             if item['body']=='/help':
-                write_msg(u'Список комманд:\n/rules - Правила беседы\n/profile - посмотреть свой профиль\n/prikol - мемы\n/kit - золото каждые 15 минут (кол-во зависит от уровня)\n/play [кол-во] - сыграть на голду (upd. выигрышь от 150% до 250% от ставки, шанс 20%)\n /give [id] [кол-во] - передать деньги\n/gift [id] [id подарка] - подарить подарок\n/gift list - список подарков\n/id - Получить свой id в чате\nhttps://vk.com/dobropojalovatv12 - Группа вк')
+                write_msg(u'Список комманд:\n/rules - Правила беседы\n/profile - посмотреть свой профиль\n/prikol - мемы\n/kit - золото каждые 15 минут (кол-во зависит от уровня)\n/play [кол-во] - сыграть на голду (upd. выигрышь от 50% до 150% от ставки, шанс 50%)\n /give [id] [кол-во] - передать деньги\n/gift [id] [id подарка] - подарить подарок\n/gift list - список подарков\n/buy [id имущества] - приобрести имущество\n/buy list - список имуществ\n/withdraw - собрать доходы с имуществ\n/id - Получить свой id в чате\nhttps://vk.com/dobropojalovatv12 - Группа вк')
             if item['body']=='/rules':
                 write_msg(u'правила тут https://vk.com/topic-150358061_35543589')
             if (item['body'][0:5]=='/kick' and (item['user_id']==32191511 or item['user_id']==287948150)): #32191511

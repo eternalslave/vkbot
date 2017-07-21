@@ -7,6 +7,8 @@ import random
 import os
 vk = vk_api.VkApi(login = 'artem.ebal@yandex.ru', password = 'ukeahi312ua')
 vk.auth()
+adm = vk_api.VkApi(login = 'dark.fusrodah@gmail.com', password = 'srn1wpua')
+adm.auth()
 values = {'out': 0,'count': 100,'time_offset': 60}
 gifts_count=len(os.listdir('gifts/'))+1
 doms_count=len(os.listdir('doms/'))+1
@@ -91,27 +93,54 @@ def status(id):
             return r+' '+emoji.emojize(':hammer:', use_aliases=True)
         return r
 def icon(lvl):
-    if lvl<5:
-        return emoji.emojize(':baby:', use_aliases=True)
-    if lvl<6:
-        return emoji.emojize(':leaves:', use_aliases=True)
-    if lvl<7:
-        return emoji.emojize(':four_leaf_clover:', use_aliases=True)
-    if lvl<8:
-        return emoji.emojize(':hibiscus:', use_aliases=True)
-    if lvl<9:
-        return emoji.emojize(':zap:', use_aliases=True)
-    if lvl<10:
-        return emoji.emojize(':cloud:', use_aliases=True)
-    if lvl<11:
-        return emoji.emojize(':crescent_moon:', use_aliases=True)
-    if lvl<12:
-        return emoji.emojize(':ocean:', use_aliases=True)
-    if lvl<13:
-        return emoji.emojize(':city_sunset:', use_aliases=True)
-    if lvl<14:
-        return emoji.emojize(':japanese_castle:', use_aliases=True)
-    return emoji.emojize(':volcano:', use_aliases=True)
+    r=''
+    high=False
+    try:
+        int(str(lvl)[0:len(str(lvl))-1])
+    except ValueError:
+        pass
+    else:
+        high=True
+        if int(str(lvl)[0:len(str(lvl))-1])==1:
+            r=':sparkles:'
+        if int(str(lvl)[0:len(str(lvl))-1])==2:
+            r=':boom:'
+        if int(str(lvl)[0:len(str(lvl))-1])==3:
+            r=':star:'
+    lvl=int(str(lvl)[len(str(lvl))-1:])
+    if high==False:
+        if lvl<5:
+            return emoji.emojize(':baby:', use_aliases=True)
+        if lvl==5:
+            return emoji.emojize(':leaves:', use_aliases=True)
+        if lvl==6:
+            return emoji.emojize(':four_leaf_clover:', use_aliases=True)
+        if lvl==7:
+            return emoji.emojize(':hibiscus:', use_aliases=True)
+        if lvl==8:
+            return emoji.emojize(':zap:', use_aliases=True)
+        if lvl==9:
+            return emoji.emojize(':cloud:', use_aliases=True)
+    if lvl==0:
+        return emoji.emojize(r+':leaves:', use_aliases=True)
+    if lvl==1:
+        return emoji.emojize(r+':four_leaf_clover:', use_aliases=True)
+    if lvl==2:
+        return emoji.emojize(r+':hibiscus:', use_aliases=True)
+    if lvl==3:
+        return emoji.emojize(r+':zap:', use_aliases=True)
+    if lvl==4:
+        return emoji.emojize(r+':cloud:', use_aliases=True)
+    if lvl==5:
+        return emoji.emojize(r+':crescent_moon:', use_aliases=True)
+    if lvl==6:
+        return emoji.emojize(r+':ocean:', use_aliases=True)
+    if lvl==7:
+        return emoji.emojize(r+':city_sunset:', use_aliases=True)
+    if lvl==8:
+        return emoji.emojize(r+':japanese_castle:', use_aliases=True)
+    if lvl==9:
+        return emoji.emojize(r+':volcano:', use_aliases=True)
 def gifts(id):
     ret='\nGifts\n——————————————————————\n'
     try:
@@ -124,19 +153,39 @@ def gifts(id):
         ret=ret+giftss
     return ret+'\n——————————————————————'
 def write_msg(s):
-    vk.method('messages.send', {'chat_id':1,'message':s})
+    try:
+        vk.method('messages.send', {'chat_id':1,'message':s})
+    except:
+        adm.method('messages.send', {'chat_id':340, 'message':'Рестарт бота через 5 минут'})
+        time.sleep(60*5)
+        print(u'Капча')
 def write_msgp(s, id):
     try:
         file=open('photo/'+str(id)+'.txt')
     except IOError as e:
-        vk.method('messages.send', {'chat_id':1,'message':s})
+        try:
+            vk.method('messages.send', {'chat_id':1,'message':s})
+        except:
+            adm.method('messages.send', {'chat_id':340, 'message':'Рестарт бота через 5 минут'})
+            time.sleep(60*5)
+            print(u'Капча')
     else:
         try:
             music=open('faudio/'+str(id)+'.txt')
         except IOError as e:
-            vk.method('messages.send', {'chat_id':1,'message':s, 'attachment':file.read()})
+            try:
+                vk.method('messages.send', {'chat_id':1,'message':s, 'attachment':file.read()})
+            except:
+                adm.method('messages.send', {'chat_id':340, 'message':'Рестарт бота через 5 минут'})
+                time.sleep(60*5)
+                print(u'Капча')
         else:
-            vk.method('messages.send', {'chat_id':1,'message':s, 'attachment':file.read()+','+music.read()})
+            try:
+                vk.method('messages.send', {'chat_id':1,'message':s, 'attachment':file.read()+','+music.read()})
+            except:
+                adm.method('messages.send', {'chat_id':340, 'message':'Рестарт бота через 5 минут'})
+                time.sleep(60*5)
+                print(u'Капча')
             music.close()
         file.close()
 while True:
@@ -251,7 +300,6 @@ while True:
                     if gold>=int(float(item['body'][6:])) and int(float(item['body'][6:]))>0:
                         file=open('gld/'+str(item['user_id'])+'.txt', 'w')
                         file.write('gld='+str(gold+int(int(item['body'][6:])*(win/100))))
-                        print(str(int(int(item['body'][6:])*(win/100))))
                         file.close()
                         write_msg('Победа! +'+str(int(int(item['body'][6:])*(win/100))))
                 else:
@@ -264,6 +312,8 @@ while True:
                         file.write('gld='+str(gold-int(item['body'][6:])))
                         file.close()
                         write_msg('Поражение :(')
+                    else:
+                        write_msg('Недостаточно средтв')
         if item['body'][0:6]=='/give ':
             gg=item['body'][6:].split()
             try:
@@ -374,7 +424,7 @@ while True:
                         g=open('gld/'+str(item['user_id'])+'.txt')
                         gold=int(g.read()[4:])
                         g.close()
-                        if gold>cost:
+                        if gold>=cost:
                             try:
                                 open('dom/'+str(item['user_id'])+'.txt', 'r')
                             except IOError as e:
@@ -396,6 +446,9 @@ while True:
                             pod.close()
                             if ok:
                                 get_money(item['user_id'])
+                                g=open('gld/'+str(item['user_id'])+'.txt')
+                                gold=int(g.read()[4:])
+                                g.close()
                                 pod=open('dom/'+str(item['user_id'])+'.txt', 'w')
                                 current=lst+str(dom)+'\n'
                                 pod.write(current)
