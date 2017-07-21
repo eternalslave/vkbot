@@ -481,23 +481,41 @@ while True:
                 write_msg('Ошибка! /marriage [id]')
             else:
                 id1=item['user_id']
-                id2=item['body'][10:]
-                body=vk.method('users.get', {'user_ids':id1+id2})
-                write_msg('Ожидание ответа от '+body[0]['first_name']+'. Осталось 5 секунд')
-                mtime=time.time()
-                while True:
-                    if time.time()-mtime>5:
-                        break
-                    response = vk.method('messages.get', values)
-                    if response['items']:
-                        values['last_message_id'] = response['items'][0]['id']
-                    for item in response['items']:
-                        if int(item['user_id'])==int(id) and item['body']=='/accept':
-                            m1=open('marriage/'+'id1'+'.txt', 'w')
-                            m1.write(body[1]['first_name']+' '+body[1]['first_name']+'\n'+i2)
-                            m2=open('marriage/'+'id2'+'.txt', 'w')
-                            m2.write(body[0]['first_name']+' '+body[0]['first_name']+'\n'+id1)
-                            m1.close()
-                            m2.close()
-                            write_msg('Успешно!')
+                try:
+                    open('marriage/'+id1+'.txt')
+                except IOError as e:
+                    write_msg('Вы заняты!')
+                else:
+                    try:
+                        open('marriage/'+id2+'.txt')
+                    except IOError as e:
+                        write_msg(id2+' уже занят!')
+                    else:
+                        gold=open('gld/'+id1+'.txt')
+                        gold=gold.read()[4:]
+                        if int(gold)>=10000:
+                            id2=item['body'][10:]
+                            body=vk.method('users.get', {'user_ids':id1+id2})
+                            write_msg('Ожидание ответа от '+body[0]['first_name']+'. Осталось 5 секунд')
+                            mtime=time.time()
+                            while True:
+                                if time.time()-mtime>5:
+                                    break
+                                response = vk.method('messages.get', values)
+                                if response['items']:
+                                    values['last_message_id'] = response['items'][0]['id']
+                                for item in response['items']:
+                                    if int(item['user_id'])==int(id) and item['body']=='/accept':
+                                        m1=open('marriage/'+'id1'+'.txt', 'w')
+                                        m1.write(body[1]['first_name']+' '+body[1]['first_name']+'\n'+i2)
+                                        m2=open('marriage/'+'id2'+'.txt', 'w')
+                                        m2.write(body[0]['first_name']+' '+body[0]['first_name']+'\n'+id1)
+                                        m1.close()
+                                        m2.close()
+                                        write_msg('Успешно!')
+                                        goldw=open('gld/'+id1+'.txt', 'w')
+                                        goldw.write('gld='+str(int(float(gold))-20000))
+                                        goldw.close()
+                        else:
+                            write_msg('Для свадьбы требуется 10000gold!')
                         
