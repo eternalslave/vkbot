@@ -12,6 +12,16 @@ adm.auth()
 values = {'out': 0,'count': 100,'time_offset': 60}
 gifts_count=len(os.listdir('gifts/'))+1
 doms_count=len(os.listdir('doms/'))+1
+def marriage(id):
+    try:
+        m=open('marrige/'+id+'.txt')
+    except IOError as e:
+        return 'Single'+emoji.emojize(':broken_heart:', use_aliases=True)
+    else:
+        name=m.readline()
+        name=name[0:len(name)-1]
+        id=readline()
+        return 'Married to @'+id+'('+name+')'+emoji.emojize(':heart:', use_aliases=True)
 def get_money(id):
     try:
         doms=open('dom/'+str(id)+'.txt', 'r')
@@ -464,13 +474,30 @@ while True:
                                 write_msg('У вас уже есть '+emoji.emojize(chek[0:len(chek)-1], use_aliases=True))
         if item['body']=='/withdraw':
             get_money(item['user_id'])
-                    
-                    
+        if item['body'][0:9]=='/marriage' and str(item['user_id'])!=item['body'][10:]:
+            try:
+                int(item['body'][10:])
+            except ValueError:
+                write_msg('Ошибка! /marriage [id]')
+            else:
+                id1=item['user_id']
+                id2=item['body'][10:]
+                body=vk.method('users.get', {'user_ids':id1+id2})
+                write_msg('Ожидание ответа от '+body[0]['first_name']+'. Осталось 5 секунд')
+                mtime=time.time()
+                while True:
+                    if time.time()-mtime>5:
+                        break
+                    response = vk.method('messages.get', values)
+                    if response['items']:
+                        values['last_message_id'] = response['items'][0]['id']
+                    for item in response['items']:
+                        if int(item['user_id'])==int(id) and item['body']=='/accept':
+                            m1=open('marriage/'+'id1'+'.txt', 'w')
+                            m1.write(body[1]['first_name']+' '+body[1]['first_name']+'\n'+i2)
+                            m2=open('marriage/'+'id2'+'.txt', 'w')
+                            m2.write(body[0]['first_name']+' '+body[0]['first_name']+'\n'+id1)
+                            m1.close()
+                            m2.close()
+                            write_msg('Успешно!')
                         
-            
-                        
-            
-            
-            
-                
-                
