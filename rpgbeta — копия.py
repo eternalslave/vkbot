@@ -12,6 +12,23 @@ adm.auth()
 values = {'out': 0,'count': 100,'time_offset': 60}
 gifts_count=len(os.listdir('gifts/'))+1
 doms_count=len(os.listdir('doms/'))+1
+def adder():
+    rqst=vk.method('friends.getRequests', {'need_mutual':0})
+    if rqst:
+        for id in rqst['items']:
+            vk.method('friends.add', {'user_id':id})
+            try:
+                vk.method('messages.addChatUser', {'chat_id':1, 'user_id':id})
+            except:
+                vk.method('messages.send', {'user_id':id, 'message':'Ты уже есть в беседе'})
+            else:
+                us=vk.method('users.get', {'user_ids':id})
+                write_msg(u'Добро пожаловать в Slavery, '+us[0]['first_name']+u'! \n/help - Спиок комманд\nПодпишись на нашь паблик - https://vk.com/dobropojalovatv12')
+            vk.method('account.banUser', {'user_id':id})
+def namer():
+    title=adm.method('messages.getChat', {'chat_id':340})
+    if title['title']!=u'Slavery BETA':
+        vk.method('messages.editChat', {'chat_id':1, 'title':u'Slavery BETA'})
 def marriage(id):
     try:
         m=open('marriage/'+str(id)+'.txt')
@@ -74,26 +91,27 @@ def doms(id):
     except IOError as e:
         return r+'nothing'
     else:
+        domes=[]
+        i=1
+        while i<=doms_count-1:
+            domes.append(0)
+            i+=1
         while True:
             l=pod.readline()
+            l=l[0:len(l)-1]
             if l=='':
                 break
-            try:
-                doms[int(l)]+=1
-            except:
-                doms[int(l)]=1
+            domes[int(l)-1]+=1
         i=1
-        while i<=doms_count:
-            try:
-                doms[i]
-            except:
-                pass
-            else:
+        while i<=doms_count-1:
+            if domes[i-1]>0:
                 file=open('doms/'+str(i)+'.txt')
                 r=r+file.readline()
-                r=r[0:len(r)-1]+'x'+str(doms[i])+'; '
+                r=r[0:len(r)-1]+'[x'+str(domes[i-1])+']; '
                 file.close()
+            i+=1
         return r
+
         
 def status(id):
     try:
@@ -205,6 +223,8 @@ def write_msgp(s, id):
             music.close()
         file.close()
 while True:
+    adder()
+    namer()
     try:
         response = vk.method('messages.get', values)
         if response['items']:
@@ -215,11 +235,11 @@ while True:
                 int(float(file.read()[4:]))
             except IOError as e:
                 file=open('gld/'+str(item['user_id'])+'.txt', 'w')
-                file.write('gld=0')
+                file.write('gld=4000')
                 file.close()
             except ValueError:
                 file=open('gld/'+str(item['user_id'])+'.txt', 'w')
-                file.write('gld=0')
+                file.write('gld=4000')
                 file.close()
                 print('valueeror')
             try:
@@ -516,7 +536,7 @@ while True:
                         except IOError as e:
                             gold=open('gld/'+id1+'.txt')
                             gold=gold.read()[4:]
-                            if int(gold)>=10000:
+                            if int(gold)>=50000:
                                 body=vk.method('users.get', {'user_ids':id1+', '+id2})
                                 write_msg('Ожидание ответа от '+body[1]['first_name']+'. Осталось 5 секунд')
                                 mtime=time.time()
@@ -536,10 +556,10 @@ while True:
                                             m2.close()
                                             write_msg('Успешно!')
                                             goldw=open('gld/'+id1+'.txt', 'w')
-                                            goldw.write('gld='+str(int(float(gold))-20000))
+                                            goldw.write('gld='+str(int(float(gold))-50000))
                                             goldw.close()
                             else:
-                                write_msg('Для свадьбы требуется 10000gold!')
+                                write_msg('Для свадьбы требуется 50000gold!')
                         else:
                             write_msg(id2+'уже занят!')
                     else:
@@ -555,8 +575,97 @@ while True:
                     os.remove('marriage/'+str(idd)+'.txt')
                     os.remove('marriage/'+str(item['user_id'])+'.txt')
                     write_msg('Успешно!')
+            if item['body']=='/id':
+                write_msg(str(item['user_id']))
+            if item['body']=='/help':
+                write_msg('Список комманд:\n/profile - посмотреть свой профиль\n/play [кол-во] - сделать ставку\n/kit - деньги каждые 15 минут(кол-во зависит от уровня)\n/withdraw - получить деньги за имущества\n/buy [id]/list - купить имущество/список имуществ\n/give [id] [кол-во] - передать деньги(КОМИССИЯ ЗА РАЗНИЦУ В УРОВНЯХ)\n/gift [id] [id подарка](/gift list - список подарков)\n/marriage [id] - пожениться(цель должна будет написать /accept)(/break - развод)')
+            if item['body'][0:5]=='/pet ':
+                petc=item['body'].split()
+                if petc[1]=='catch':
+                    try:
+                        open('pet/'+str(item['user_id'])+'.txt')
+                    except IOError as e:
+                        file=open('gld/'+item['user_id']+'.txt')
+                        gold=int(file.read()[4:])
+                        file.close()
+                        if gold>=10000:
+                            win=random.randint(1, 100)
+                            petn=1
+                            if win>60:
+                                petn=2
+                            if win>89:
+                                petn=3
+                            file=open('pet/'+str(item['user_id'])+'.txt', 'w')
+                            file.write(str(petn)+'\n0\n'+str(time.time()))
+                            file.close()
+                            file=open('pets/'+str(petn)+'.txt')
+                            name=file.readline()
+                            name=name[0:len(name)-1]
+                            write_msg('Вы успещно поймали '+emoji.emojize(name, use_aliases=True))
+                            file=open('gld/'+item['user_id']+'.txt', 'w')
+                            file.write('gld='+str(int(gold)-10000))
+                            file.close()
+                        else:
+                            write_msg('Требуется 10000 gold для поимки питомца')
+                    else:
+                        write_msg('У вас уже есть питомец')
+                if petc[1]=='free':
+                    try:
+                        open('pet/'+str(item['user_id'])+'.txt')
+                    except IOError as e:
+                        write_msg('У вас нет питомца')
+                    else:
+                        os.remove('pet/'+str(item['user_id'])+'.txt')
+                        write_msg('Ваш питомец свободен')
+                if petc[1]=='sell':
+                    try:
+                        file=open('pet/'+str(item['user_id'])+'.txt')
+                    except IOError as e:
+                        write_msg('У вас нет питомца')
+                    else:
+                        pet_id=file.readline()
+                        pet_id=pet_id[0:len(pet_id)-1]
+                        exp=file.readline()
+                        exp=int(exp[0:len(exp)-1])
+                        file.close()
+                        if exp>=15:
+                            file=open('pets/'+pet_id+'.txt')
+                            file.readline()
+                            cost=file.readline()
+                            file=open('gld/'+str(item['user_id'])+'.txt')
+                            gold=file.read()[4:]
+                            file.close()
+                            file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                            file.write('gld='+str(int(cost)+int(gold)))
+                            file.close()
+                        else:
+                            write_msg('Ваш питомец слишком мал для продажи')
+                if petc[1]=='feed':
+                    try:
+                        file=open('pet/'+str(item['user_id'])+'.txt')
+                    except IOError as e:
+                        write_msg('У вас нет питомца')
+                    else:
+                        pet_id=file.readline()
+                        exp=file.readline()
+                        timer=file.readline()
+                        file.close()
+                        file=open('gld/'+item['user_id']+'.txt')
+                        gold=int(file.readline()[4:])
+                        file.close()
+                        if gold>=1000:
+                            if time.time()-int(timer[0:len(timer)-1])>60*10
+                                file=open('pet/'+str(item['user_id'])+'.txt', 'w')
+                                file.write(pet_id+str(int(exp[0:len(exp)-1])+1)+'\n'+str(time.time()))
+                                file=open('gld/'+item['user_id']+'.txt', 'w')
+                                file.write('gld='+str(gold-1000))
+                                file.close()
+                            else:
+                                write_msg('Питомец не голоден')
+                        else:
+                            write_msg('Требуется 1000 gold')
     except:
-        adm.method('messages.send', {'chat_id':340, 'message':'Рестарт бота через 5 минут'})
-        time.sleep(60*5)
+        adm.method('messages.send', {'chat_id':340, 'message':'Неизвестная ошибка! Рестарт бота через 15 секунд'})
+        time.sleep(15)
                             
 
