@@ -12,6 +12,21 @@ adm.auth()
 values = {'out': 0,'count': 100,'time_offset': 60}
 gifts_count=len(os.listdir('gifts/'))+1
 doms_count=len(os.listdir('doms/'))+1
+def petprof(id):
+    try:
+        file=open('pet/'+str(id)+'.txt')
+    except IOError:
+        return 'Has no pet'
+    else:
+        pet_id=file.readline()
+        pet_id=pet_id[0:len(pet_id)-1]
+        exp=file.readline()
+        exp=exp[0:len(exp)-1]
+        file.close()
+        file=open('pets/'+pet_id+'.txt')
+        pet_name=file.readline()
+        pet_name=pet_name[0:len(pet_name)-1]
+        return 'Pet: '+emoji.emojize(pet_name, use_aliases=True)+'['+str(exp)+']'
 def adder():
     rqst=vk.method('friends.getRequests', {'need_mutual':0})
     if rqst:
@@ -282,7 +297,7 @@ while True:
                 gold=file.read()
                 file.close()
                 try:
-                    write_msgp(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':moneybag:', use_aliases=True)+'\n'+emoji.emojize(marriage(item['user_id']), use_aliases=True)+'\n'+emoji.emojize(doms(item['user_id']), use_aliases=True)+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True), item['user_id'])
+                    write_msgp(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':moneybag:', use_aliases=True)+'\n'+emoji.emojize(marriage(item['user_id']), use_aliases=True)+'\n'+emoji.emojize(doms(item['user_id']), use_aliases=True)+'\n'+petprof(item['user_id'])+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True), item['user_id'])
                 except TypeError:
                     pass
             if item['body'][0:4]=='/kit':
