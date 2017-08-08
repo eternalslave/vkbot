@@ -12,6 +12,23 @@ adm.auth()
 values = {'out': 0,'count': 100,'time_offset': 60}
 gifts_count=len(os.listdir('gifts/'))+1
 doms_count=len(os.listdir('doms/'))+1
+def adder():
+    rqst=vk.method('friends.getRequests', {'need_mutual':0})
+    if rqst:
+        for id in rqst['items']:
+            vk.method('friends.add', {'user_id':id})
+            try:
+                vk.method('messages.addChatUser', {'chat_id':1, 'user_id':id})
+            except:
+                vk.method('messages.send', {'user_id':id, 'message':'Ты уже есть в беседе'})
+            else:
+                us=vk.method('users.get', {'user_ids':id})
+                write_msg(u'Добро пожаловать в Slavery, '+us[0]['first_name']+u'! \n/help - Спиок комманд\nПодпишись на нашь паблик - https://vk.com/dobropojalovatv12')
+            vk.method('account.banUser', {'user_id':id})
+def name():
+    title=adm.method('messages.getChat', {'chat_id':340})
+    if title['title']!=u'Slavery BETA':
+        vk.method('messages.editChat', {'chat_id':1, 'title':u'Slavery BETA'})
 def marriage(id):
     try:
         m=open('marriage/'+str(id)+'.txt')
@@ -74,18 +91,27 @@ def doms(id):
     except IOError as e:
         return r+'nothing'
     else:
-        doms=[]
+        domes=[]
+        i=1
+        while i<=doms_count-1:
+            domes.append(0)
+            i+=1
         while True:
             l=pod.readline()
+            l=l[0:len(l)-1]
             if l=='':
                 break
-            doms.append(l[0:len(l)-1])
-        for dom in doms:
-            file=open('doms/'+str(dom)+'.txt')
-            r=r+file.readline()
-            r=r[0:len(r)-1]+'; '
-            file.close()
+            domes[int(l)-1]+=1
+        i=1
+        while i<=doms_count-1:
+            if domes[i-1]>0:
+                file=open('doms/'+str(i)+'.txt')
+                r=r+file.readline()
+                r=r[0:len(r)-1]+'x'+str(domes[i-1])+'; '
+                file.close()
+            i+=1
         return r
+
         
 def status(id):
     try:
@@ -197,6 +223,8 @@ def write_msgp(s, id):
             music.close()
         file.close()
 while True:
+    adder()
+    name()
     try:
         response = vk.method('messages.get', values)
         if response['items']:
@@ -257,7 +285,7 @@ while True:
                     write_msgp(u'Профиль @id'+str(item['user_id'])+' (' + vk.method('users.get', { 'user_ids':item['user_id']})[0]['first_name']+ u') '+icon(int(math.log(int(exp)/5+1, 2)))+'\nLVL: '+str(int(math.log(int(exp)/5+1, 2)))+emoji.emojize(':bust_in_silhouette:\nexp: ')+str(int(exp))+'/'+str((2**(int(math.log(int(exp)/5+1, 2))+1)-1)*5)+emoji.emojize(':books:\nGold: ')+gold[4:]+emoji.emojize(':moneybag:', use_aliases=True)+'\n'+emoji.emojize(marriage(item['user_id']), use_aliases=True)+'\n'+emoji.emojize(doms(item['user_id']), use_aliases=True)+'\nStatus: '+status(item['user_id'])+emoji.emojize(gifts(item['user_id']), use_aliases=True), item['user_id'])
                 except TypeError:
                     pass
-            if item['body']=='/kit':
+            if item['body'][0:4]=='/kit':
                 try:
                     file=open('gld/'+str(item['user_id'])+'_kit.txt', 'r')
                 except IOError as e:
@@ -508,7 +536,7 @@ while True:
                         except IOError as e:
                             gold=open('gld/'+id1+'.txt')
                             gold=gold.read()[4:]
-                            if int(gold)>=10000:
+                            if int(gold)>=50000:
                                 body=vk.method('users.get', {'user_ids':id1+', '+id2})
                                 write_msg('Ожидание ответа от '+body[1]['first_name']+'. Осталось 5 секунд')
                                 mtime=time.time()
@@ -528,10 +556,10 @@ while True:
                                             m2.close()
                                             write_msg('Успешно!')
                                             goldw=open('gld/'+id1+'.txt', 'w')
-                                            goldw.write('gld='+str(int(float(gold))-20000))
+                                            goldw.write('gld='+str(int(float(gold))-50000))
                                             goldw.close()
                             else:
-                                write_msg('Для свадьбы требуется 10000gold!')
+                                write_msg('Для свадьбы требуется 50000gold!')
                         else:
                             write_msg(id2+'уже занят!')
                     else:
@@ -547,6 +575,8 @@ while True:
                     os.remove('marriage/'+str(idd)+'.txt')
                     os.remove('marriage/'+str(item['user_id'])+'.txt')
                     write_msg('Успешно!')
+            if item['body'][0:3]=='/id':
+                write_msg(str(item['user_id']))
     except:
         adm.method('messages.send', {'chat_id':340, 'message':'Рестарт бота через 5 минут'})
         time.sleep(60*5)
