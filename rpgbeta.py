@@ -107,7 +107,7 @@ def doms(id):
             if domes[i-1]>0:
                 file=open('doms/'+str(i)+'.txt')
                 r=r+file.readline()
-                r=r[0:len(r)-1]+'x'+str(domes[i-1])+'; '
+                r=r[0:len(r)-1]+'[x'+str(domes[i-1])+']; '
                 file.close()
             i+=1
         return r
@@ -578,7 +578,7 @@ while True:
             if item['body'][0:3]=='/id':
                 write_msg(str(item['user_id']))
     except:
-        adm.method('messages.send', {'chat_id':340, 'message':'Рестарт бота через 5 минут'})
-        time.sleep(60*5)
+        adm.method('messages.send', {'chat_id':340, 'message':'Рестарт бота через 15 секунд'})
+        time.sleep(15)
                             
 
