@@ -27,8 +27,8 @@ def adder():
             vk.method('account.banUser', {'user_id':id})
 def namer():
     title=adm.method('messages.getChat', {'chat_id':340})
-    if title['title']!='Slavery BETA':
-        vk.method('messages.editChat', {'chat_id':1, 'title':'Slavery BETA'})
+    if title['title']!=u'Slavery BETA':
+        vk.method('messages.editChat', {'chat_id':1, 'title':u'Slavery BETA'})
 def marriage(id):
     try:
         m=open('marriage/'+str(id)+'.txt')
@@ -578,7 +578,92 @@ while True:
             if item['body']=='/id':
                 write_msg(str(item['user_id']))
             if item['body']=='/help':
-                write_msg('Список комманд:\n/profile - посмотреть свой профиль\n/play [кол-во] - сделать ставку\n/kit - деньги каждые 15 минут(кол-во зависит от уровная)\n/withdraw - получить деньги за имущества\n/buy [id]/list - купить имущество/список имуществ\n/give [id] [кол-во] - передать деньги(КОМИССИЯ ЗА РАЗНИЦУ В УРОВНЯХ)\n/gift [id] [id подарка](/gift list - список подарков)\n/marriage [id] - пожениться(цель должна будет написать /accept)(/break - развод)')
+                write_msg('Список комманд:\n/profile - посмотреть свой профиль\n/play [кол-во] - сделать ставку\n/kit - деньги каждые 15 минут(кол-во зависит от уровня)\n/withdraw - получить деньги за имущества\n/buy [id]/list - купить имущество/список имуществ\n/give [id] [кол-во] - передать деньги(КОМИССИЯ ЗА РАЗНИЦУ В УРОВНЯХ)\n/gift [id] [id подарка](/gift list - список подарков)\n/marriage [id] - пожениться(цель должна будет написать /accept)(/break - развод)')
+            if item['body'][0:5]=='/pet ':
+                petc=item['body'].split()
+                if petc[1]=='catch':
+                    try:
+                        open('pet/'+str(item['user_id'])+'.txt')
+                    except IOError as e:
+                        file=open('gld/'+str(item['user_id'])+'.txt')
+                        gold=int(file.read()[4:])
+                        file.close()
+                        if gold>=10000:
+                            win=random.randint(1, 100)
+                            petn=1
+                            if win>60:
+                                petn=2
+                            if win>89:
+                                petn=3
+                            file=open('pet/'+str(item['user_id'])+'.txt', 'w')
+                            file.write(str(petn)+'\n0\n'+str(time.time()))
+                            file.close()
+                            file=open('pets/'+str(petn)+'.txt')
+                            name=file.readline()
+                            name=name[0:len(name)-1]
+                            write_msg('Вы успещно поймали '+emoji.emojize(name, use_aliases=True))
+                            file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                            file.write('gld='+str(int(gold)-10000))
+                            file.close()
+                        else:
+                            write_msg('Требуется 10000 gold для поимки питомца')
+                    else:
+                        write_msg('У вас уже есть питомец')
+                if petc[1]=='free':
+                    try:
+                        open('pet/'+str(item['user_id'])+'.txt')
+                    except IOError as e:
+                        write_msg('У вас нет питомца')
+                    else:
+                        os.remove('pet/'+str(item['user_id'])+'.txt')
+                        write_msg('Ваш питомец свободен')
+                if petc[1]=='sell':
+                    try:
+                        file=open('pet/'+str(item['user_id'])+'.txt')
+                    except IOError as e:
+                        write_msg('У вас нет питомца')
+                    else:
+                        pet_id=file.readline()
+                        pet_id=pet_id[0:len(pet_id)-1]
+                        exp=file.readline()
+                        exp=int(exp[0:len(exp)-1])
+                        file.close()
+                        if exp>=15:
+                            file=open('pets/'+pet_id+'.txt')
+                            file.readline()
+                            cost=file.readline()
+                            file=open('gld/'+str(item['user_id'])+'.txt')
+                            gold=file.read()[4:]
+                            file.close()
+                            file=open('gld/'+str(item['user_id'])+'.txt', 'w')
+                            file.write('gld='+str(int(cost)+int(gold)))
+                            file.close()
+                        else:
+                            write_msg('Ваш питомец слишком мал для продажи')
+                if petc[1]=='feed':
+                    try:
+                        file=open('pet/'+str(item['user_id'])+'.txt')
+                    except IOError as e:
+                        write_msg('У вас нет питомца')
+                    else:
+                        pet_id=file.readline()
+                        exp=file.readline()
+                        timer=file.readline()
+                        file.close()
+                        file=open('gld/'+str(item['user_id'])+'.txt')
+                        gold=int(file.readline()[4:])
+                        file.close()
+                        if gold>=1000:
+                            if time.time()-int(float(timer[0:len(timer)-1]))>60*10:
+                                file=open('pet/'+str(item['user_id'])+'.txt', 'w')
+                                file.write(pet_id+str(int(exp[0:len(exp)-1])+1)+'\n'+str(time.time()))
+                                file=open('gld/'+item['user_id']+'.txt', 'w')
+                                file.write('gld='+str(gold-1000))
+                                file.close()
+                            else:
+                                write_msg('Питомец проголодается через '+str(int((60*10-time.time()+int(float(timer[0:len(timer)-1])))/60))+' минут')
+                        else:
+                            write_msg('Требуется 1000 gold')
     except:
         adm.method('messages.send', {'chat_id':340, 'message':'Неизвестная ошибка! Рестарт бота через 15 секунд'})
         time.sleep(15)
