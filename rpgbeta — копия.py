@@ -664,7 +664,7 @@ while True:
                                 write_msg('Питомец проголодается через '+str(int((60*10-time.time()+int(float(timer[0:len(timer)-1])))/60))+' минут')
                         else:
                             write_msg('Требуется 1000 gold')
-    except IOError:
+    except:
         adm.method('messages.send', {'chat_id':340, 'message':'Неизвестная ошибка! Рестарт бота через 15 секунд'})
         time.sleep(15)
                             
