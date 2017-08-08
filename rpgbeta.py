@@ -235,11 +235,11 @@ while True:
                 int(float(file.read()[4:]))
             except IOError as e:
                 file=open('gld/'+str(item['user_id'])+'.txt', 'w')
-                file.write('gld=0')
+                file.write('gld=4000')
                 file.close()
             except ValueError:
                 file=open('gld/'+str(item['user_id'])+'.txt', 'w')
-                file.write('gld=0')
+                file.write('gld=4000')
                 file.close()
                 print('valueeror')
             try:
@@ -575,10 +575,12 @@ while True:
                     os.remove('marriage/'+str(idd)+'.txt')
                     os.remove('marriage/'+str(item['user_id'])+'.txt')
                     write_msg('Успешно!')
-            if item['body'][0:3]=='/id':
+            if item['body']=='/id':
                 write_msg(str(item['user_id']))
+            if item['body']=='/help':
+                write_msg('Список комманд:\n/profile - посмотреть свой профиль\n/play [кол-во] - сделать ставку\n/kit - деньги каждые 15 минут(кол-во зависит от уровная)\n/withdraw - получить деньги за имущества\n/buy [id]/list - купить имущество/список имуществ\n/give [id] [кол-во] - передать деньги(КОМИССИЯ ЗА РАЗНИЦУ В УРОВНЯХ)\n/gift [id] [id подарка](/gift list - список подарков)\n/marriage [id] - пожениться(цель должна будет написать /accept)(/break - развод)
     except:
-        adm.method('messages.send', {'chat_id':340, 'message':'Рестарт бота через 15 секунд'})
+        adm.method('messages.send', {'chat_id':340, 'message':'Неизвестная ошибка! Рестарт бота через 15 секунд'})
         time.sleep(15)
                             
 
