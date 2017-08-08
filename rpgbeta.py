@@ -25,10 +25,10 @@ def adder():
                 us=vk.method('users.get', {'user_ids':id})
                 write_msg(u'Добро пожаловать в Slavery, '+us[0]['first_name']+u'! \n/help - Спиок комманд\nПодпишись на нашь паблик - https://vk.com/dobropojalovatv12')
             vk.method('account.banUser', {'user_id':id})
-def name():
+def namer():
     title=adm.method('messages.getChat', {'chat_id':340})
-    if title['title']!=u'Slavery BETA':
-        vk.method('messages.editChat', {'chat_id':1, 'title':u'Slavery BETA'})
+    if title['title']!='Slavery BETA':
+        vk.method('messages.editChat', {'chat_id':1, 'title':'Slavery BETA'})
 def marriage(id):
     try:
         m=open('marriage/'+str(id)+'.txt')
@@ -224,7 +224,7 @@ def write_msgp(s, id):
         file.close()
 while True:
     adder()
-    name()
+    namer()
     try:
         response = vk.method('messages.get', values)
         if response['items']:
@@ -578,7 +578,7 @@ while True:
             if item['body']=='/id':
                 write_msg(str(item['user_id']))
             if item['body']=='/help':
-                write_msg('Список комманд:\n/profile - посмотреть свой профиль\n/play [кол-во] - сделать ставку\n/kit - деньги каждые 15 минут(кол-во зависит от уровная)\n/withdraw - получить деньги за имущества\n/buy [id]/list - купить имущество/список имуществ\n/give [id] [кол-во] - передать деньги(КОМИССИЯ ЗА РАЗНИЦУ В УРОВНЯХ)\n/gift [id] [id подарка](/gift list - список подарков)\n/marriage [id] - пожениться(цель должна будет написать /accept)(/break - развод)
+                write_msg('Список комманд:\n/profile - посмотреть свой профиль\n/play [кол-во] - сделать ставку\n/kit - деньги каждые 15 минут(кол-во зависит от уровная)\n/withdraw - получить деньги за имущества\n/buy [id]/list - купить имущество/список имуществ\n/give [id] [кол-во] - передать деньги(КОМИССИЯ ЗА РАЗНИЦУ В УРОВНЯХ)\n/gift [id] [id подарка](/gift list - список подарков)\n/marriage [id] - пожениться(цель должна будет написать /accept)(/break - развод)')
     except:
         adm.method('messages.send', {'chat_id':340, 'message':'Неизвестная ошибка! Рестарт бота через 15 секунд'})
         time.sleep(15)

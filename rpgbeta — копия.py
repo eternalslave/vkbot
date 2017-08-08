@@ -585,7 +585,7 @@ while True:
                     try:
                         open('pet/'+str(item['user_id'])+'.txt')
                     except IOError as e:
-                        file=open('gld/'+item['user_id']+'.txt')
+                        file=open('gld/'+str(item['user_id'])+'.txt')
                         gold=int(file.read()[4:])
                         file.close()
                         if gold>=10000:
@@ -602,7 +602,7 @@ while True:
                             name=file.readline()
                             name=name[0:len(name)-1]
                             write_msg('Вы успещно поймали '+emoji.emojize(name, use_aliases=True))
-                            file=open('gld/'+item['user_id']+'.txt', 'w')
+                            file=open('gld/'+str(item['user_id'])+'.txt', 'w')
                             file.write('gld='+str(int(gold)-10000))
                             file.close()
                         else:
@@ -650,21 +650,21 @@ while True:
                         exp=file.readline()
                         timer=file.readline()
                         file.close()
-                        file=open('gld/'+item['user_id']+'.txt')
+                        file=open('gld/'+str(item['user_id'])+'.txt')
                         gold=int(file.readline()[4:])
                         file.close()
                         if gold>=1000:
-                            if time.time()-int(timer[0:len(timer)-1])>60*10
+                            if time.time()-int(float(timer[0:len(timer)-1]))>60*10:
                                 file=open('pet/'+str(item['user_id'])+'.txt', 'w')
                                 file.write(pet_id+str(int(exp[0:len(exp)-1])+1)+'\n'+str(time.time()))
                                 file=open('gld/'+item['user_id']+'.txt', 'w')
                                 file.write('gld='+str(gold-1000))
                                 file.close()
                             else:
-                                write_msg('Питомец не голоден')
+                                write_msg('Питомец проголодается через '+str(int((60*10-time.time()+int(float(timer[0:len(timer)-1])))/60))+' минут')
                         else:
                             write_msg('Требуется 1000 gold')
-    except:
+    except IOError:
         adm.method('messages.send', {'chat_id':340, 'message':'Неизвестная ошибка! Рестарт бота через 15 секунд'})
         time.sleep(15)
                             
