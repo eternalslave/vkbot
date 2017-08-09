@@ -609,11 +609,16 @@ while True:
                         file.close()
                         if gold>=10000:
                             win=random.randint(1, 100)
-                            petn=1
+                            if random.randint(0,1):
+                                petn=1
+                            else:
+                                petn=5
                             if win>60:
                                 petn=2
                             if win>89:
                                 petn=3
+                            if win==100:
+                                petn=6
                             file=open('pet/'+str(item['user_id'])+'.txt', 'w')
                             file.write(str(petn)+'\n0\n'+str(time.time()))
                             file.close()
